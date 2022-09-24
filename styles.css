@@ -6,3 +6,40 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.obsidian-plugin-mtg__decklist__section-list {
+    list-style: none;
+}
+
+.obsidian-plugin-mtg__decklist__section-list-item {
+    font-weight: 400;
+    display: flex;
+}
+
+.obsidian-plugin-mtg__decklist__section-list-item span {
+    flex: 1;
+}
+
+.obsidian-plugin-mtg__count {
+    flex: 1;
+}
+
+
+.obsidian-plugin-mtg__insufficient-count {
+    color: #666;
+    font-style: italic;
+}
+
+.obsidian-plugin-mtg__comment {
+    color: #999;
+    font-style: italic;
+}
+
+.obsidian-plugin-mtg__error {
+    color: #a33;
+    font-style: italic;
+}
+
+.obsidian-plugin-mtg__decklist__section-heading {
+    font-weight: 800;
+}
