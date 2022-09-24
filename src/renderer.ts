@@ -81,7 +81,7 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
             const errors: string[] = [];
 
             let globalCount = null;
-            
+
             if (!shouldSkipGlobalCounts) {
                 globalCount = cardCounts[cardId] || 0;
             }
@@ -132,7 +132,6 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
 
        // Create a heading
        const sectionHedingEl = document.createElement('h3');
-       sectionHedingEl.innerText = section;
        sectionHedingEl.addClass('obsidian-plugin-mtg__decklist__section-heading');
        sectionContainer.appendChild(sectionHedingEl);
 
@@ -140,10 +139,16 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
        const sectionList = document.createElement('ul');
        sectionList.addClass('obsidian-plugin-mtg__decklist__section-list');
 
+       const sectionCardCounts: CardCounts = {};
+
        // Create line item elements
        linesBySection[section].forEach((line: Line) => {
             const lineEl = document.createElement('li');
             lineEl.addClass('obsidian-plugin-mtg__decklist__section-list-item');
+
+            if (!sectionCardCounts[section]) {
+                sectionCardCounts[section] = 0;
+            }
 
             // TODO: handle blank lines more formally?
             if (line.lineType === 'card') {
@@ -162,17 +167,23 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
                 cardCommentsEl.addClass('obsidian-plugin-mtg__comment');
                 cardCommentsEl.innerText = line.comments?.join('#') || '';
 
+                const lineCardCount = (line.cardCount || 0);
+                const lineGlobalCount = line.globalCount === null ? -1 : line.globalCount || 0;
                 // Show missing card counts
-                if (line.globalCount !== null && (line.cardCount || 0) > (line.globalCount || 0)) {
-                    cardCountEl.innerText =
-                    `${line.cardCount || 0} / ${line.globalCount || 0}`;
+                if (lineGlobalCount !== -1 && lineCardCount > lineGlobalCount) {
+                    cardCountEl.innerHTML = [
+                        `<span class="obsidian-plugin-mtg__error">${lineCardCount}</span> / `,
+                        `<span>${lineGlobalCount}</span>`
+                    ].join('');
+
                     lineEl.addClass('obsidian-plugin-mtg__insufficient-count');
-                    // Prepend errors
-                    cardErrorsEl.innerText = 'Insufficient cards in collection. ' + cardErrorsEl.innerText;
+                    // TODO: reconsider whether this needs to be an error
+                    // cardErrorsEl.innerText = 'Insufficient cards in collection. ' + cardErrorsEl.innerText;
                 } else {
-                    lineEl.innerText =
-                    `${line.cardCount || 0}`;
+                    lineEl.innerText = `${lineCardCount}`;
                 }
+
+                sectionCardCounts[section] = sectionCardCounts[section] + (line.cardCount || 0);
 
                 lineEl.appendChild(cardCountEl);
                 lineEl.appendChild(cardNameEl);
@@ -191,6 +202,8 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
                 sectionList.appendChild(lineEl);
             }
        });
+
+       sectionHedingEl.innerText = `${section} (${sectionCardCounts[section]} cards)`;
 
        sectionContainer.appendChild(sectionList);
 
