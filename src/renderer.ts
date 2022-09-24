@@ -7,7 +7,7 @@ const COMMENT_DELIMITER = '#';
 interface Line {
     lineType: 'card' | 'section' | 'error' | 'blank' | 'comment';
     cardCount?: number;
-    globalCount?: number;
+    globalCount?: number | null;
     cardName?: string;
     comments?: string[];
     errors?: string[];
