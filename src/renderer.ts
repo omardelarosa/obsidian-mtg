@@ -27,6 +27,9 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
 
     const lines: string[] = source.split('\n');
 
+    // This means global counts are not available because they are missing or no collection files are present
+    let shouldSkipGlobalCounts = !Object.keys(cardCounts).length;
+
     // count, collection_count, card name, comment
     const parsedLines: Line[] = lines.map((line) => {
         // Handle blank lines
@@ -77,7 +80,11 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
             const cardId: string = nameToId(cardName)
             const errors: string[] = [];
 
-            const globalCount = cardCounts[cardId] || 0;
+            let globalCount = null;
+            
+            if (!shouldSkipGlobalCounts) {
+                globalCount = cardCounts[cardId] || 0;
+            }
 
             if (cardName.length === 0) {
                errors.push(`Unable to parse card name from: ${line}`);
@@ -156,7 +163,7 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
                 cardCommentsEl.innerText = line.comments?.join('#') || '';
 
                 // Show missing card counts
-                if ((line.cardCount || 0) > (line.globalCount || 0)) {
+                if (line.globalCount !== null && (line.cardCount || 0) > (line.globalCount || 0)) {
                     cardCountEl.innerText =
                     `${line.cardCount || 0} / ${line.globalCount || 0}`;
                     lineEl.addClass('obsidian-plugin-mtg__insufficient-count');
@@ -191,10 +198,6 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
     });
 
     sectionContainers.forEach(sectionContainer => containerEl.appendChild(sectionContainer));
-
-    // console.log('container: ', containerEl);
-
-    // console.log(containerEl.innerHTML);
 
     el.appendChild(containerEl);
 }
