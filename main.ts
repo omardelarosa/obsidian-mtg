@@ -1,5 +1,5 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { createCardCountsMapping, DEFAULT_COLLECTION_COUNT_COLUMN, DEFAULT_COLLECTION_FILE_EXTENSION, DEFAULT_COLLECTION_NAME_COLUMN, DEFAULT_COLLECTION_SYNC_INTERVAL, processCollectionFiles, syncCounts } from 'src/collection';
+import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { DEFAULT_COLLECTION_COUNT_COLUMN, DEFAULT_COLLECTION_FILE_EXTENSION, DEFAULT_COLLECTION_NAME_COLUMN, DEFAULT_COLLECTION_SYNC_INTERVAL, syncCounts } from 'src/collection';
 import { renderDecklist } from 'src/renderer';
 import { ObsidianPluginMtgSettings } from 'src/settings';
 
@@ -59,7 +59,7 @@ export default class MyPlugin extends Plugin {
 
 
 		this.registerMarkdownCodeBlockProcessor('mtg-deck', async (source: string, el: HTMLElement, ctx) => {
-			let userOptions = {};
+			// let userOptions = {};
 			let error = null;
 
 			// TODO: implement user options
