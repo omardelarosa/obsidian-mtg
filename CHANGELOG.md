@@ -9,3 +9,5 @@
 - Fixing issue with 1st section header
 - Added more flexibility with section header names
 - Fixed single-line comment issues
+- Added `husky` and a pre-commit hook
+- Added `eslint` task
