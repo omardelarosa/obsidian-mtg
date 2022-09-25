@@ -14,11 +14,11 @@ interface Line {
     text?: string;
 }
 
-
 const lineMatchRE = /(\d+)\s(.*)/;
+const setCodesRE = /(\([A-Za-z0-9]{3}\)\s\d+)/;
+const lineWithSetCodes = /(\d+)\s+([\w| ,']*)\s+(\([A-Za-z0-9]{3}\)\s\d+)/;
 const blankLineRE = /^\s+$/;
-const headingMatchRE = /^\w+:$/;
-const commentLineRE = new RegExp('^' + COMMENT_DELIMITER + '.*$');
+const headingMatchRE = new RegExp('^[^[0-9|' + COMMENT_DELIMITER + ']');
 
 export const renderDecklist = (el: Element, source: string, cardCounts: CardCounts): void => {
     const containerEl: Element = document.createElement('div');
@@ -48,7 +48,7 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
         }
 
         // Handle comment lines
-        if (line.startsWith(COMMENT_DELIMITER)) {
+        if (line.startsWith(COMMENT_DELIMITER + ' ')) {
             return {
                 lineType: 'comment',
                 comments: [line]
@@ -57,6 +57,11 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
 
         let lineWithoutComments: string = line;
         const comments: string[] = [];
+        // Handle setcodes, etc
+        if (lineWithoutComments.match(lineWithSetCodes)) {
+            lineWithoutComments = lineWithoutComments.replace(setCodesRE, '').trim();
+        }
+
 
         // Handle comments
         if (line.includes(COMMENT_DELIMITER)) {
@@ -66,7 +71,7 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
         }
 
         // Handle card lines
-        const lineParts = lineWithoutComments.match(lineMatchRE);
+        let lineParts = lineWithoutComments.match(lineMatchRE);
 
         // Handle invalid line
         if (lineParts == null) {
@@ -104,14 +109,16 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
     const linesBySection: Record<string, Line[]> = {};
 
     let currentSection = DEFAULT_SECTION_NAME;
-    let sections: string[] = [`${currentSection}`];
+    let sections: string[] = [];
 
-    parsedLines.forEach(line => {
+    parsedLines.forEach((line, idx) => {
+        if (idx == 0 && line.lineType !== 'section') {
+            currentSection = `${currentSection}`;
+            sections.push(`${currentSection}`);
+        }
         if (line.lineType === 'section') {
             currentSection = line.text || DEFAULT_SECTION_NAME;
-            if (!sections.includes(currentSection)) {
-                sections.push(`${currentSection}`);
-            }
+            sections.push(`${currentSection}`);
         } else {
             if (!linesBySection[currentSection]) {
                 linesBySection[currentSection] = [];
@@ -120,11 +127,9 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
         }
     });
 
-    // console.log(linesBySection);
-
     // Make elements from parsedLines
     const sectionContainers: Element[] = [];
-    
+
     sections.forEach((section: string) => {
        // Put the entire deck in containing div for styling
        const sectionContainer = document.createElement('div');
@@ -193,10 +198,9 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
                 sectionList.appendChild(lineEl);
     
             } else if (line.lineType === 'comment') {
-                // TODO: style this
                 const cardCommentsEl = document.createElement('span');
                 cardCommentsEl.addClass('obsidian-plugin-mtg__comment');
-
+                cardCommentsEl.innerText = line.comments?.join(' ') || '';
                 lineEl.appendChild(cardCommentsEl);
 
                 sectionList.appendChild(lineEl);
