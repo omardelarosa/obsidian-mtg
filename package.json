@@ -7,6 +7,7 @@
 		"dev": "node esbuild.config.mjs",
 		"lint": "eslint main.ts",
 		"test": "./node_modules/.bin/_mocha 'src/**/*.spec.ts'",
+		"verify": "npm run test && npm run lint",
 		"prepare": "husky install",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
