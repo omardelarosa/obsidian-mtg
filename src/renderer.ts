@@ -20,7 +20,7 @@ const lineWithSetCodes = /(\d+)\s+([\w| ,']*)\s+(\([A-Za-z0-9]{3}\)\s\d+)/;
 const blankLineRE = /^\s+$/;
 const headingMatchRE = new RegExp('^[^[0-9|' + COMMENT_DELIMITER + ']');
 
-export const renderDecklist = (el: Element, source: string, cardCounts: CardCounts): void => {
+export const renderDecklist = (source: string, cardCounts: CardCounts): Element => {
     const containerEl: Element = document.createElement('div');
 
     containerEl.classList.add('obsidian-plugin-mtg__decklist');
@@ -164,10 +164,13 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
                 const cardNameEl = document.createElement('span');
                 cardNameEl.textContent = `${line.cardName || UNKNOWN_CARD}`;
 
-                const cardErrorsEl = document.createElement('span');
-                cardErrorsEl.classList.add('obsidian-plugin-mtg__error');
-                cardErrorsEl.textContent = line.errors?.join(',') || '';
-
+                let cardErrorsEl = null;
+                if (line.errors && line.errors.length) {
+                    cardErrorsEl = document.createElement('span');
+                    cardErrorsEl.classList.add('obsidian-plugin-mtg__error');
+                    cardErrorsEl.textContent = line.errors?.join(',') || '';
+                }
+                
                 const cardCommentsEl = document.createElement('span');
                 cardCommentsEl.classList.add('obsidian-plugin-mtg__comment');
                 cardCommentsEl.textContent = line.comments?.join('#') || '';
@@ -176,16 +179,18 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
                 const lineGlobalCount = line.globalCount === null ? -1 : line.globalCount || 0;
                 // Show missing card counts
                 if (lineGlobalCount !== -1 && lineCardCount > lineGlobalCount) {
+                    const counts = document.createElement('span');
                     const cardRowEl = document.createElement('span');
                     cardRowEl.classList.add("obsidian-plugin-mtg__error");
                     cardRowEl.textContent = `${lineCardCount}`;
                     const cardRowCountEl = document.createElement('span');
-                    cardRowCountEl.textContent = `${lineGlobalCount}`;
+                    cardRowCountEl.textContent = ` / ${lineGlobalCount}`;
                     lineEl.classList.add('obsidian-plugin-mtg__insufficient-count');
-                    lineEl.appendChild(cardRowEl);
-                    lineEl.appendChild(cardRowCountEl);
+                    counts.appendChild(cardRowEl);
+                    counts.appendChild(cardRowCountEl);
+                    cardCountEl.appendChild(counts);
                 } else {
-                    lineEl.textContent = `${lineCardCount}`;
+                    cardCountEl.textContent = `${lineCardCount}`;
                 }
 
                 sectionCardCounts[section] = sectionCardCounts[section] + (line.cardCount || 0);
@@ -193,8 +198,11 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
                 lineEl.appendChild(cardCountEl);
                 lineEl.appendChild(cardNameEl);
                 lineEl.appendChild(cardCommentsEl);
-                lineEl.appendChild(cardErrorsEl);
 
+                if (cardErrorsEl) {
+                    lineEl.appendChild(cardErrorsEl);
+                }
+                
                 sectionList.appendChild(lineEl);
     
             } else if (line.lineType === 'comment') {
@@ -214,8 +222,6 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
        sectionContainers.push(sectionContainer);
     });
 
-    console.log('sections: ', sections);
     sectionContainers.forEach(sectionContainer => containerEl.appendChild(sectionContainer));
-    console.log('APPEND CHILD: ', el);
-    el.appendChild(containerEl);
+    return containerEl;
 }

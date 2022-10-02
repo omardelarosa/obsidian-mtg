@@ -29,6 +29,10 @@ Sideboard:
 1 Reckoner Bankbuster
 4 Ertai's Scorn`;
 
+const EXAMPLE_DECK_1_HTML = `
+<div class=\"obsidian-plugin-mtg__decklist__section-container\"><h3 class=\"obsidian-plugin-mtg__decklist__section-heading\">Deck (60 cards)</h3><ul class=\"obsidian-plugin-mtg__decklist__section-list\"><li class=\"obsidian-plugin-mtg__decklist__section-list-item obsidian-plugin-mtg__insufficient-count\"><span class=\"obsidian-plugin-mtg__count\"><span><span class=\"obsidian-plugin-mtg__error\">4</span><span> / 3</span></span></span><span>Delver of Secrets // Insectile Aberration</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item obsidian-plugin-mtg__insufficient-count\"><span class=\"obsidian-plugin-mtg__count\"><span><span class=\"obsidian-plugin-mtg__error\">4</span><span> / 3</span></span></span><span>Haughty Djinn</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">3</span><span>Tolarian Terror</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">4</span><span>Consider</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">4</span><span>Essence Scatter</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">4</span><span>Fading Hope</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">4</span><span>Make Disappear </span><span class=\"obsidian-plugin-mtg__comment\"> consider Negate instead</span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item obsidian-plugin-mtg__insufficient-count\"><span class=\"obsidian-plugin-mtg__count\"><span><span class=\"obsidian-plugin-mtg__error\">4</span><span> / 0</span></span></span><span>Slip Out the Back</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">3</span><span>Spell Pierce</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">3</span><span>Thirst for Discovery</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">20</span><span>Island</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">1</span><span>Otawara, Soaring City</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item obsidian-plugin-mtg__insufficient-count\"><span class=\"obsidian-plugin-mtg__count\"><span><span class=\"obsidian-plugin-mtg__error\">1</span><span> / 0</span></span></span><span>Otherworldly Gaze</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item obsidian-plugin-mtg__insufficient-count\"><span class=\"obsidian-plugin-mtg__count\"><span><span class=\"obsidian-plugin-mtg__error\">1</span><span> / 0</span></span></span><span>Reckoner Bankbuster</span><span class=\"obsidian-plugin-mtg__comment\"></span></li></ul></div><div class=\"obsidian-plugin-mtg__decklist__section-container\"><h3 class=\"obsidian-plugin-mtg__decklist__section-heading\">Sideboard: (15 cards)</h3><ul class=\"obsidian-plugin-mtg__decklist__section-list\"><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">2</span><span>Disdainful Stroke</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">4</span><span>Negate</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item\"><span class=\"obsidian-plugin-mtg__count\">4</span><span>Out of the Way</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item obsidian-plugin-mtg__insufficient-count\"><span class=\"obsidian-plugin-mtg__count\"><span><span class=\"obsidian-plugin-mtg__error\">1</span><span> / 0</span></span></span><span>Reckoner Bankbuster</span><span class=\"obsidian-plugin-mtg__comment\"></span></li><li class=\"obsidian-plugin-mtg__decklist__section-list-item obsidian-plugin-mtg__insufficient-count\"><span class=\"obsidian-plugin-mtg__count\"><span><span class=\"obsidian-plugin-mtg__error\">4</span><span> / 0</span></span></span><span>Ertai's Scorn</span><span class=\"obsidian-plugin-mtg__comment\"></span></li></ul></div>
+`;
+
 const EXAMPLE_COLLECTION = {
     'delver of secrets': 3,
     'haughty djinn': 3,
@@ -53,19 +57,8 @@ const EXAMPLE_COLLECTION = {
 describe('Renderer', () => {
     describe('#renderDecklist', () => {
         test('', () => {
-            const el = dom.window.document.createElement('div');
-            // el.classList.add('test-container');
-            // doc.body.appendChild(el);
-            // const elNode = doc.querySelector('.test-container');
-            // if (!elNode) {
-            //     throw new Error('missing test node!');
-            // }
-            // renderDecklist(elNode, EXAMPLE_DECK_1, EXAMPLE_COLLECTION);
-            // const actual = elNode.textContent;
-            // const expected = '';
-            // dom.serialize();
-            // console.log('EL', elNode);
-            // expect(actual).toEqual(expected);
+            const el = renderDecklist(EXAMPLE_DECK_1, EXAMPLE_COLLECTION);
+            expect(el.innerHTML.trim()).toEqual(EXAMPLE_DECK_1_HTML.trim());
         });
     });
 });

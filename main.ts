@@ -42,7 +42,8 @@ export default class ObsidianPluginMtg extends Plugin {
 			this.cardCounts = await syncCounts(vault, this.settings);
 
 			try {
-				renderDecklist(el, source, this.cardCounts);
+				const containerEl: Element = renderDecklist(source, this.cardCounts);
+				el.appendChild(containerEl);
 			} catch (err) {
 				error = err;
 				console.log(err);

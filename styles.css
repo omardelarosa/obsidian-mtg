@@ -33,6 +33,7 @@ If your plugin does not need CSS, delete this file.
 .obsidian-plugin-mtg__comment {
     color: #999;
     font-style: italic;
+    flex-grow: 4;
 }
 
 .obsidian-plugin-mtg__error {
