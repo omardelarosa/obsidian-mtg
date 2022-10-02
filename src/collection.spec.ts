@@ -1,8 +1,7 @@
+import {describe, expect, test} from '@jest/globals';
+
 import { createCardCountsMapping, nameToId } from "./collection";
 import { ObsidianPluginMtgSettings } from "./settings";
-const chai = require("chai");
-
-const expect = chai.expect;
 
 // Basic example
 const EXAMPLE_CSV_1 = 
@@ -27,28 +26,28 @@ const EXAMPLE_CSV_3 =
 
 describe("Collection", () => {
     describe("#nameToId()", () => {
-        it("handles split cards", () => {
+        test("handles split cards", () => {
             const result =
                 nameToId("Delver of Secrets // Insectile Aberration");
-            expect(result).to.eq("delver of secrets");
+            expect(result).toEqual("delver of secrets");
         });
 
-        it("handles spacing around name", () => {
+        test("handles spacing around name", () => {
             const result =
                 nameToId("  Black Lotus       ");
-            expect(result).to.eq("black lotus");
+            expect(result).toEqual("black lotus");
         });
 
-        it("handles commas", () => {
+        test("handles commas", () => {
             const result =
                 nameToId("Otawara, Soaring City");
-            expect(result).to.eq("otawara, soaring city");
+            expect(result).toEqual("otawara, soaring city");
         });
 
-        it("handles apostrophes", () => {
+        test("handles apostrophes", () => {
             const result =
                 nameToId("Rona's Vortex");
-            expect(result).to.eq("rona's vortex");
+            expect(result).toEqual("rona's vortex");
         });
     });
 
@@ -61,7 +60,7 @@ describe("Collection", () => {
                 syncIntervalMs: 10
             }
         }
-        it('handles multiple CSVs', async () => {
+        test('handles multiple CSVs', async () => {
             const contents = [
                 EXAMPLE_CSV_1,
                 EXAMPLE_CSV_2
@@ -72,7 +71,7 @@ describe("Collection", () => {
                 settings,
             );
 
-            expect(mapping).to.deep.eq({
+            expect(mapping).toEqual({
                 "delver of secrets": 9,
                 "otawara, soaring city": 10,
                 "rona's vortex": 5,

@@ -20,10 +20,10 @@ const lineWithSetCodes = /(\d+)\s+([\w| ,']*)\s+(\([A-Za-z0-9]{3}\)\s\d+)/;
 const blankLineRE = /^\s+$/;
 const headingMatchRE = new RegExp('^[^[0-9|' + COMMENT_DELIMITER + ']');
 
-export const renderDecklist = (el: Element, source: string, cardCounts: CardCounts): void => {
+export const renderDecklist = (source: string, cardCounts: CardCounts): Element => {
     const containerEl: Element = document.createElement('div');
 
-    containerEl.addClass('obsidian-plugin-mtg__decklist');
+    containerEl.classList.add('obsidian-plugin-mtg__decklist');
 
     const lines: string[] = source.split('\n');
 
@@ -133,23 +133,23 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
     sections.forEach((section: string) => {
        // Put the entire deck in containing div for styling
        const sectionContainer = document.createElement('div');
-       sectionContainer.addClass('obsidian-plugin-mtg__decklist__section-container')
+       sectionContainer.classList.add('obsidian-plugin-mtg__decklist__section-container')
 
        // Create a heading
        const sectionHedingEl = document.createElement('h3');
-       sectionHedingEl.addClass('obsidian-plugin-mtg__decklist__section-heading');
+       sectionHedingEl.classList.add('obsidian-plugin-mtg__decklist__section-heading');
        sectionContainer.appendChild(sectionHedingEl);
 
        // Create container for the list items
        const sectionList = document.createElement('ul');
-       sectionList.addClass('obsidian-plugin-mtg__decklist__section-list');
+       sectionList.classList.add('obsidian-plugin-mtg__decklist__section-list');
 
        const sectionCardCounts: CardCounts = {};
 
        // Create line item elements
        linesBySection[section].forEach((line: Line) => {
             const lineEl = document.createElement('li');
-            lineEl.addClass('obsidian-plugin-mtg__decklist__section-list-item');
+            lineEl.classList.add('obsidian-plugin-mtg__decklist__section-list-item');
 
             if (!sectionCardCounts[section]) {
                 sectionCardCounts[section] = 0;
@@ -159,33 +159,38 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
             if (line.lineType === 'card') {
                 // TODO: style this
                 const cardCountEl = document.createElement('span');
-                cardCountEl.addClass('obsidian-plugin-mtg__count');
+                cardCountEl.classList.add('obsidian-plugin-mtg__count');
 
                 const cardNameEl = document.createElement('span');
-                cardNameEl.innerText = `${line.cardName || UNKNOWN_CARD}`;
+                cardNameEl.textContent = `${line.cardName || UNKNOWN_CARD}`;
 
-                const cardErrorsEl = document.createElement('span');
-                cardErrorsEl.addClass('obsidian-plugin-mtg__error');
-                cardErrorsEl.innerText = line.errors?.join(',') || '';
-
+                let cardErrorsEl = null;
+                if (line.errors && line.errors.length) {
+                    cardErrorsEl = document.createElement('span');
+                    cardErrorsEl.classList.add('obsidian-plugin-mtg__error');
+                    cardErrorsEl.textContent = line.errors?.join(',') || '';
+                }
+                
                 const cardCommentsEl = document.createElement('span');
-                cardCommentsEl.addClass('obsidian-plugin-mtg__comment');
-                cardCommentsEl.innerText = line.comments?.join('#') || '';
+                cardCommentsEl.classList.add('obsidian-plugin-mtg__comment');
+                cardCommentsEl.textContent = line.comments?.join('#') || '';
 
                 const lineCardCount = (line.cardCount || 0);
                 const lineGlobalCount = line.globalCount === null ? -1 : line.globalCount || 0;
                 // Show missing card counts
                 if (lineGlobalCount !== -1 && lineCardCount > lineGlobalCount) {
-                    cardCountEl.innerHTML = [
-                        `<span class="obsidian-plugin-mtg__error">${lineCardCount}</span> / `,
-                        `<span>${lineGlobalCount}</span>`
-                    ].join('');
-
-                    lineEl.addClass('obsidian-plugin-mtg__insufficient-count');
-                    // TODO: reconsider whether this needs to be an error
-                    // cardErrorsEl.innerText = 'Insufficient cards in collection. ' + cardErrorsEl.innerText;
+                    const counts = document.createElement('span');
+                    const cardRowEl = document.createElement('span');
+                    cardRowEl.classList.add("obsidian-plugin-mtg__error");
+                    cardRowEl.textContent = `${lineCardCount}`;
+                    const cardRowCountEl = document.createElement('span');
+                    cardRowCountEl.textContent = ` / ${lineGlobalCount}`;
+                    lineEl.classList.add('obsidian-plugin-mtg__insufficient-count');
+                    counts.appendChild(cardRowEl);
+                    counts.appendChild(cardRowCountEl);
+                    cardCountEl.appendChild(counts);
                 } else {
-                    lineEl.innerText = `${lineCardCount}`;
+                    cardCountEl.textContent = `${lineCardCount}`;
                 }
 
                 sectionCardCounts[section] = sectionCardCounts[section] + (line.cardCount || 0);
@@ -193,13 +198,16 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
                 lineEl.appendChild(cardCountEl);
                 lineEl.appendChild(cardNameEl);
                 lineEl.appendChild(cardCommentsEl);
-                lineEl.appendChild(cardErrorsEl);
 
+                if (cardErrorsEl) {
+                    lineEl.appendChild(cardErrorsEl);
+                }
+                
                 sectionList.appendChild(lineEl);
     
             } else if (line.lineType === 'comment') {
                 const cardCommentsEl = document.createElement('span');
-                cardCommentsEl.addClass('obsidian-plugin-mtg__comment');
+                cardCommentsEl.classList.add('obsidian-plugin-mtg__comment');
                 cardCommentsEl.innerText = line.comments?.join(' ') || '';
                 lineEl.appendChild(cardCommentsEl);
 
@@ -207,7 +215,7 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
             }
        });
 
-       sectionHedingEl.innerText = `${section} (${sectionCardCounts[section]} cards)`;
+       sectionHedingEl.textContent = `${section} (${sectionCardCounts[section]} cards)`;
 
        sectionContainer.appendChild(sectionList);
 
@@ -215,6 +223,5 @@ export const renderDecklist = (el: Element, source: string, cardCounts: CardCoun
     });
 
     sectionContainers.forEach(sectionContainer => containerEl.appendChild(sectionContainer));
-
-    el.appendChild(containerEl);
+    return containerEl;
 }
