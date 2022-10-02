@@ -12,7 +12,7 @@ const DEFAULT_SETTINGS: ObsidianPluginMtgSettings = {
 	}
 }
 
-export default class MyPlugin extends Plugin {
+export default class ObsidianPluginMtg extends Plugin {
 	settings: ObsidianPluginMtgSettings;
 
 	cardCounts: Record<string, number>
@@ -20,30 +20,8 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Obsidian MtG', (evt: MouseEvent) => {
-			// // Called when the user clicks the icon.
-			// new Notice('This is a notice!');
-
-			// TODO: create a new deck
-		});
-
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
-
-
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new ObsidianPluginMtgSettingsTab(this.app, this));
-
-		// // If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// // Using this function will automatically remove the event listener when this plugin is disabled.
-		// this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-		// 	console.log('click', evt);
-		// });
-
-		// this.registerDomEvent(document, 'DOMContentLoaded', (evt: any) => {
-		// 	console.log('DOM Content', evt);
-		// });
 
 		const { vault } = this.app;
 
@@ -59,20 +37,7 @@ export default class MyPlugin extends Plugin {
 
 
 		this.registerMarkdownCodeBlockProcessor('mtg-deck', async (source: string, el: HTMLElement, ctx) => {
-			// let userOptions = {};
 			let error = null;
-
-			// TODO: implement user options
-			// const optionsMatch = source.match(optionsRegex);
-			// if (optionsMatch !== null) {
-			// 	source = optionsMatch.groups["source"];
-			// 	try {
-			// 		userOptions = JSON.parse(optionsMatch.groups["options"]);
-			// 	} catch (e) {
-			// 		console.error(e);
-			// 		error = `<strong>Failed to parse user-options</strong>\n\t${e}`;
-			// 	}
-			// }
 
 			this.cardCounts = await syncCounts(vault, this.settings);
 
@@ -86,7 +51,7 @@ export default class MyPlugin extends Plugin {
 			if (error !== null) {
 				const errorNode = document.createElement('div');
 				errorNode.innerHTML = error;
-				errorNode.addClass("obsidian-plugin-mtg-error");
+				errorNode.classList.add("obsidian-plugin-mtg-error");
 				el.appendChild(errorNode);
 			}
 		});
@@ -106,26 +71,10 @@ export default class MyPlugin extends Plugin {
 	}
 }
 
-// class SampleModal extends Modal {
-// 	constructor(app: App) {
-// 		super(app);
-// 	}
-
-// 	onOpen() {
-// 		const {contentEl} = this;
-// 		contentEl.setText('Woah!');
-// 	}
-
-// 	onClose() {
-// 		const {contentEl} = this;
-// 		contentEl.empty();
-// 	}
-// }
-
 class ObsidianPluginMtgSettingsTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: ObsidianPluginMtg;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: ObsidianPluginMtg) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
