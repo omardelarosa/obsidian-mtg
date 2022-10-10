@@ -11,7 +11,9 @@ const DEFAULT_SETTINGS: ObsidianPluginMtgSettings = {
 		syncIntervalMs: DEFAULT_COLLECTION_SYNC_INTERVAL
 	},
 	decklist: {
-		preferredCurrency: 'usd'
+		preferredCurrency: 'usd',
+		showCardNamesAsHyperlinks: true,
+		showCardPreviews: true
 	}
 }
 
@@ -133,6 +135,28 @@ class ObsidianPluginMtgSettingsTab extends PluginSettingTab {
 				.addOption('tix', 'Tix')
 				.onChange(async (value: 'usd' | 'eur' | 'tix') => {
 					this.plugin.settings.decklist.preferredCurrency = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Show Card Name Hyperlinks')
+			.setDesc('Enables card names that link to Scryfall or purchasing sites when possible')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.decklist.showCardNamesAsHyperlinks)
+				.onChange(async (value: boolean) => {
+					this.plugin.settings.decklist.showCardNamesAsHyperlinks = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Show Card Images')
+			.setDesc('Enables card previews when hovering with the mouse on desktop')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.decklist.showCardPreviews)
+				.onChange(async (value: boolean) => {
+					this.plugin.settings.decklist.showCardPreviews = value;
 					await this.plugin.saveSettings();
 				})
 			);

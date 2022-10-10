@@ -60,7 +60,9 @@ describe("Collection", () => {
                 syncIntervalMs: 10
             },
             decklist: {
-                preferredCurrency: 'usd'
+                preferredCurrency: 'usd',
+                showCardNamesAsHyperlinks: true,
+                showCardPreviews: true
             }
         }
         test('handles multiple CSVs', async () => {
