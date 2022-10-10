@@ -9,6 +9,9 @@ const DEFAULT_SETTINGS: ObsidianPluginMtgSettings = {
 		nameColumn: DEFAULT_COLLECTION_NAME_COLUMN,
 		countColumn: DEFAULT_COLLECTION_COUNT_COLUMN,
 		syncIntervalMs: DEFAULT_COLLECTION_SYNC_INTERVAL
+	},
+	decklist: {
+		preferredCurrency: 'usd'
 	}
 }
 
@@ -42,7 +45,7 @@ export default class ObsidianPluginMtg extends Plugin {
 			this.cardCounts = await syncCounts(vault, this.settings);
 
 			try {
-				const containerEl: Element = renderDecklist(source, this.cardCounts);
+				const containerEl: Element = await renderDecklist(source, this.cardCounts, this.settings);
 				el.appendChild(containerEl);
 			} catch (err) {
 				error = err;
@@ -100,25 +103,38 @@ class ObsidianPluginMtgSettingsTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-				.setName('Card name column name')
-				.setDesc('The name of the CSV column used for card names')
-				.addText(text => text
-					.setPlaceholder('Name')
-					.setValue(this.plugin.settings.collection.nameColumn)
-					.onChange(async (value) => {
-						this.plugin.settings.collection.nameColumn = value;
-						await this.plugin.saveSettings();
-					}));
+			.setName('Card name column name')
+			.setDesc('The name of the CSV column used for card names')
+			.addText(text => text
+				.setPlaceholder('Name')
+				.setValue(this.plugin.settings.collection.nameColumn)
+				.onChange(async (value) => {
+					this.plugin.settings.collection.nameColumn = value;
+					await this.plugin.saveSettings();
+				}));
 
 		new Setting(containerEl)
-				.setName('Card count column name')
-				.setDesc('The name of the CSV column used for card counts/quantity')
-				.addText(text => text
-					.setPlaceholder('Count')
-					.setValue(this.plugin.settings.collection.nameColumn)
-					.onChange(async (value) => {
-						this.plugin.settings.collection.countColumn = value;
-						await this.plugin.saveSettings();
-					}));
-	}
+			.setName('Card count column name')
+			.setDesc('The name of the CSV column used for card counts/quantity')
+			.addText(text => text
+				.setPlaceholder('Count')
+				.setValue(this.plugin.settings.collection.nameColumn)
+				.onChange(async (value) => {
+					this.plugin.settings.collection.countColumn = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('Preferred Currency')
+			.setDesc('The currency you prefer when viewing card prices in your decklist')
+			.addDropdown((dropdown) => dropdown
+				.addOption('usd', 'USD')
+				.addOption('eur', 'EUR')
+				.addOption('tix', 'Tix')
+				.onChange(async (value: 'usd' | 'eur' | 'tix') => {
+					this.plugin.settings.decklist.preferredCurrency = value;
+					await this.plugin.saveSettings();
+				})
+			);
+}
 }

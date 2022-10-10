@@ -9,4 +9,8 @@ export interface ObsidianPluginMtgSettings {
         // The number of milliseconds between collection count syncs
         syncIntervalMs: number;
 	}
+	decklist: {
+		// Card Price Currency:
+		preferredCurrency: 'usd' | 'eur' | 'tix';
+	}
 }

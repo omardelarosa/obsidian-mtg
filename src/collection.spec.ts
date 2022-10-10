@@ -58,6 +58,9 @@ describe("Collection", () => {
                 nameColumn: 'Name',
                 countColumn: 'Count',
                 syncIntervalMs: 10
+            },
+            decklist: {
+                preferredCurrency: 'usd'
             }
         }
         test('handles multiple CSVs', async () => {
