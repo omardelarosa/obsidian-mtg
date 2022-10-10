@@ -16,5 +16,7 @@ export interface ObsidianPluginMtgSettings {
 		showCardNamesAsHyperlinks: boolean;
 		// Show card previews
 		showCardPreviews: boolean;
+		// Show buylist
+		showBuylist: boolean;
 	}
 }

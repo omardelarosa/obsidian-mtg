@@ -13,7 +13,8 @@ const DEFAULT_SETTINGS: ObsidianPluginMtgSettings = {
 	decklist: {
 		preferredCurrency: 'usd',
 		showCardNamesAsHyperlinks: true,
-		showCardPreviews: true
+		showCardPreviews: true,
+		showBuylist: true
 	}
 }
 
@@ -157,6 +158,17 @@ class ObsidianPluginMtgSettingsTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.decklist.showCardPreviews)
 				.onChange(async (value: boolean) => {
 					this.plugin.settings.decklist.showCardPreviews = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Show Buylist')
+			.setDesc('Enables a buylist below your decklist with buylinks for each card')
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.decklist.showBuylist)
+				.onChange(async (value: boolean) => {
+					this.plugin.settings.decklist.showBuylist = value;
 					await this.plugin.saveSettings();
 				})
 			);

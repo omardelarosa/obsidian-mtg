@@ -71,7 +71,8 @@ describe('Renderer', () => {
         decklist: {
             preferredCurrency: 'usd',
             showCardNamesAsHyperlinks: true,
-            showCardPreviews: true
+            showCardPreviews: true,
+            showBuylist: true
         }
     };
 

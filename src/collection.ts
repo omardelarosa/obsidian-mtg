@@ -12,16 +12,14 @@ export const DEFAULT_COLLECTION_SYNC_INTERVAL = 5000;
 
 export const UNKNOWN_CARD = 'UNKNOWN_CARD';
 
-export const nameToId = (rawName: string) => {
-    return rawName
-        // handle double-faced cards
+export const nameToId = (rawName: string | undefined) => {
+    return (rawName || "")
+        // handle double-faced cards (i.e. "Delver Of Secrets" and "Delver of Secrets // Insectile Aberration")
         .split('//')[0]
         // remove surrounding whitespace
         .trim()
         // normalizing casing
         .toLowerCase()
-        
-        
 }
 
 export const checkIfFileIsCollectionFile = (file: TFile, settings: ObsidianPluginMtgSettings): boolean => {

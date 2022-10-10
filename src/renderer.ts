@@ -28,6 +28,8 @@ const currencyMapping = {
     'tix': 'Tx'
 }
 
+const idToNameMemo: Record<string, string> = {}
+
 export const getCardPrice = (cardName: string, cardDataById: Record<string, CardData>, settings: ObsidianPluginMtgSettings) => {
     const cardId = nameToId(cardName);
     const cardData = cardDataById[cardId];
@@ -157,7 +159,7 @@ export const fetchCardDataFromScryfall = async (distinctCardNames: string[]): Pr
         batch.data.forEach((card: CardData) => {
             cards.push(card);
             if (card.name) {
-                const cardId = nameToId(card.name || '');
+                const cardId = nameToId(card.name);
                 cardDataByCardId[cardId] = card;
             }
         });
@@ -180,6 +182,9 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
     let currentSection = DEFAULT_SECTION_NAME;
     let sections: string[] = [];
 
+    // A reverse mapping for getting names from an id
+    const idsToNames: Record<string, string> = {};
+
     parsedLines.forEach((line, idx) => {
         if (idx == 0 && line.lineType !== 'section') {
             currentSection = `${currentSection}`;
@@ -198,7 +203,17 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
 
     // Create list of distinct card names
     const distinctCardNames: string[] = buildDistinctCardNamesList(parsedLines);
-    const cardDataByCardId = await dataFetcher(distinctCardNames);
+    let cardDataByCardId: Record<string, CardData> = {};
+
+    // Try to fetch data from Scryfall
+    try {
+        cardDataByCardId = await dataFetcher(distinctCardNames);
+    } catch (err) {
+        console.log('Error fetching card data: ', err);
+    }
+
+    // Determines whether any card info was found for the cards on the list
+    const hasCardInfo = Object.keys(cardDataByCardId).length > 0;
 
     // Make elements from parsedLines
     const sectionContainers: Element[] = [];
@@ -259,7 +274,8 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
 
                 // Add hyperlink when possible
                 if (line.cardName) {
-                    const cardInfo = cardDataByCardId[nameToId(line.cardName || "")];
+                    const cardId = nameToId(line.cardName);
+                    const cardInfo = cardDataByCardId[cardId];
                     if (settings.decklist.showCardNamesAsHyperlinks && cardInfo && cardInfo.scryfall_uri) {
                         const cardLinkEl = document.createElement('a');
                         const purchaseUri = cardInfo.scryfall_uri;
@@ -306,7 +322,7 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
                     counts.appendChild(cardRowCountEl);
                     cardCountEl.appendChild(counts);
 
-                    const cardId = nameToId(line.cardName || '');
+                    const cardId = nameToId(line.cardName);
                     missingCardCounts[cardId] = (missingCardCounts[cardId] || 0) + (lineCardCount - lineGlobalCount);
                     sectionMissingCardCounts[cardId] = (sectionMissingCardCounts[cardId] || 0) + (lineCardCount - lineGlobalCount);
 
@@ -355,7 +371,7 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
                 if (settings.decklist.showCardPreviews) {
                     // Event handlers for card artwork popover
                     lineEl.addEventListener("mouseenter", () => {
-                        const cardId = nameToId(line.cardName || '');
+                        const cardId = nameToId(line.cardName);
                         const cardInfo = cardDataByCardId[cardId];
                         let imgUri: string | undefined;
                         if (cardInfo) {
@@ -435,16 +451,18 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
         }, 0.00);
 
         // Value
-        const totalValueOwned = sectionTotalCost[section] - totalMissingCostInSection;
-        const totalValueOwnedEl = document.createElement('span');
-        totalValueOwnedEl.classList.add("obsidian-plugin-mtg__error");
-        totalValueOwnedEl.textContent = `${currencyMapping[settings.decklist.preferredCurrency]}${totalValueOwned.toFixed(2)}`;
-
-        const totalValueNeededEl = document.createElement('span');
-        totalValueNeededEl.textContent = ` / ${currencyMapping[settings.decklist.preferredCurrency]}${sectionTotalCost[section].toFixed(2)}`;
-        totalValueNeededEl.classList.add("obsidian-plugin-mtg__insufficient-count");
-        totalCostEl.appendChild(totalValueOwnedEl);
-        totalCostEl.appendChild(totalValueNeededEl);
+        if (hasCardInfo) {
+            const totalValueOwned = sectionTotalCost[section] - totalMissingCostInSection;
+            const totalValueOwnedEl = document.createElement('span');
+            totalValueOwnedEl.classList.add("obsidian-plugin-mtg__error");
+            totalValueOwnedEl.textContent = `${currencyMapping[settings.decklist.preferredCurrency]}${totalValueOwned.toFixed(2)}`;
+    
+            const totalValueNeededEl = document.createElement('span');
+            totalValueNeededEl.textContent = ` / ${currencyMapping[settings.decklist.preferredCurrency]}${sectionTotalCost[section].toFixed(2)}`;
+            totalValueNeededEl.classList.add("obsidian-plugin-mtg__insufficient-count");
+            totalCostEl.appendChild(totalValueOwnedEl);
+            totalCostEl.appendChild(totalValueNeededEl);
+        }
 
         // Otherwise show simple values
        } else {
@@ -460,7 +478,10 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
        totalCardsUnitEl.textContent = "cards";
        totalsEl.appendChild(totalCardsUnitEl);
 
-       totalsEl.appendChild(totalCostEl);
+       if (hasCardInfo) {
+         totalsEl.appendChild(totalCostEl);
+       }
+       
        sectionContainer.appendChild(totalsEl);
 
        sectionContainers.push(sectionContainer);
@@ -472,7 +493,7 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
     const buylistCardIds = Object.keys(missingCardCounts);
     const buylistCardCounts = Object.values(missingCardCounts).reduce((acc, val) => acc + val, 0);
     // Only show the buylist element when there are missing cards
-    if (buylistCardIds.length) {
+    if (buylistCardIds.length && settings.decklist.showBuylist) {
         // Build Buylist
         const buylist = document.createElement('div');
         buylist.classList.add('obsidian-plugin-mtg__buylist-container');
@@ -487,16 +508,18 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
 
         buylistCardIds.forEach((cardId) => {
             const cardInfo = cardDataByCardId[cardId];
+            const buylistLineEl = document.createElement('div');
+            buylistLineEl.classList.add('obsidian-plugin-mtg__buylist-line');
+
+            const countNeeded = missingCardCounts[cardId];
+                
+            const countEl = document.createElement('span');
+            countEl.classList.add('obsidian-plugin-mtg__decklist__section-totals__count');
+            countEl.textContent = `${countNeeded}`;
+
             if (cardInfo) {
                 const cardName = cardInfo.name || '';
-                const countNeeded = missingCardCounts[cardId];
-                const buylistLineEl = document.createElement('div');
-                buylistLineEl.classList.add('obsidian-plugin-mtg__buylist-line');
-
-                const countEl = document.createElement('span');
-                countEl.classList.add('obsidian-plugin-mtg__decklist__section-totals__count');
-                countEl.textContent = `${countNeeded}`;
-
+                
                 const cardNameEl = document.createElement('span');
                 cardNameEl.classList.add('obsidian-plugin-mtg__card-name');
 
@@ -517,7 +540,6 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
                 totalCostOfBuylist = totalCostOfBuylist + (cardPrice * countNeeded);
 
                 const totalPriceEl = document.createElement('span');
-                // totalPriceEl.classList.add('obsidian-plugin-mtg__decklist__section-totals');
                 totalPriceEl.textContent = ` `; // This foils copy pasting
 
                 buylistLineEl.appendChild(countEl);
@@ -526,8 +548,16 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
 
                 buylist.appendChild(buylistLineEl);
             } else {
-                // Get name from another method...
-                console.log('card name not found for: ', cardId);
+                const cardNameEl = document.createElement('span');
+                // TODO: use a system for restoring this ID to its original casing
+                const cardName = cardId || UNKNOWN_CARD;
+                cardNameEl.classList.add('obsidian-plugin-mtg__card-name');
+                cardNameEl.textContent = `${cardName}`;
+
+                buylistLineEl.appendChild(countEl);
+                buylistLineEl.appendChild(cardNameEl);
+
+                buylist.appendChild(buylistLineEl);
             }
         });
 
@@ -545,13 +575,19 @@ export const renderDecklist = async (source: string, cardCounts: CardCounts, set
         cardNameEl.classList.add('obsidian-plugin-mtg__card-name');
         cardNameEl.textContent = `cards`; // TODO: add the word 'total' or cards?
 
-        const totalPriceEl = document.createElement('span');
-        totalPriceEl.classList.add('obsidian-plugin-mtg__decklist__section-totals');
-        totalPriceEl.textContent = `${currencyMapping[settings.decklist.preferredCurrency]}${totalCostOfBuylist.toFixed(2)}`;
+        let totalPriceEl = null;
+        if (hasCardInfo) {
+            totalPriceEl = document.createElement('span');
+            totalPriceEl.classList.add('obsidian-plugin-mtg__decklist__section-totals');
+            totalPriceEl.textContent = `${currencyMapping[settings.decklist.preferredCurrency]}${totalCostOfBuylist.toFixed(2)}`;    
+        }
 
         buylistLineEl.appendChild(countEl);
         buylistLineEl.appendChild(cardNameEl);
-        buylistLineEl.appendChild(totalPriceEl);
+
+        if (totalPriceEl) {
+            buylistLineEl.appendChild(totalPriceEl);
+        }
 
         buylist.appendChild(buylistLineEl);
 
