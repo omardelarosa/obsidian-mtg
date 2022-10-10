@@ -7,8 +7,27 @@ If your plugin does not need CSS, delete this file.
 
 */
 
+.obsidian-plugin-mtg__decklist {
+    padding: 8px;
+}
+
 .obsidian-plugin-mtg__decklist__section-list {
     list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.obsidian-plugin-mtg__decklist__section-totals {
+    display: flex;
+}
+
+.obsidian-plugin-mtg__decklist__section-totals span {
+    flex: 1;
+}
+
+
+span.obsidian-plugin-mtg__decklist__section-totals__count {
+    flex: 1;
 }
 
 .obsidian-plugin-mtg__decklist__section-list-item {
@@ -25,14 +44,23 @@ If your plugin does not need CSS, delete this file.
 }
 
 
+span.obsidian-plugin-mtg__card-name {
+    flex: 2;
+}
+
 .obsidian-plugin-mtg__insufficient-count {
     color: #666;
     font-style: italic;
 }
 
-.obsidian-plugin-mtg__comment {
+span.obsidian-plugin-mtg__comment {
     color: #999;
     font-style: italic;
+    flex: 2;
+}
+
+.obsidian-plugin-mtg__card-price {
+
 }
 
 .obsidian-plugin-mtg__error {
@@ -42,4 +70,62 @@ If your plugin does not need CSS, delete this file.
 
 .obsidian-plugin-mtg__decklist__section-heading {
     font-weight: 800;
+}
+
+.obsidian-plugin-mtg__footer {
+
+}
+
+.obsidian-plugin-mtg__card-image {
+    height: 180px;
+}
+
+.obsidian-plugin-mtg__buylist-container {
+
+}
+
+.obsidian-plugin-mtg__buylist-line {
+    display: flex;
+}
+
+.obsidian-plugin-mtg__buylist-line span {
+    flex: 1;
+}
+
+/* .obsidian-plugin-mtg__decklist__section-totals {
+    font-weight: 800;
+} */
+
+.obsidian-plugin-mtg__decklist__section-totals .obsidian-plugin-mtg__card-name {
+    flex: 4;
+}
+
+.obsidian-plugin-mtg__buylist-line .obsidian-plugin-mtg__decklist__section-totals__count {
+    flex: 1;
+}
+
+.obsidian-plugin-mtg__buylist-line .obsidian-plugin-mtg__card-name {
+    flex: 4;
+}
+
+.obsidian-plugin-mtg__buylist-line .obsidian-plugin-mtg__decklist__section-totals {
+    flex: 1;
+}
+
+.obsidian-plugin-mtg__card-image-container {
+    text-align: right;
+    position: absolute;
+}
+
+.obsidian-plugin-mtg__buy-button {
+    flex: 1;
+    margin: 5px;
+}
+
+.obsidian-plugin-mtg__buy-buttons-container {
+    /* height: 240px; */
+    flex: 2 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
