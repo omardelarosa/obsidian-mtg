@@ -22,15 +22,6 @@ export const nameToId = (rawName: string | undefined) => {
         .toLowerCase()
 }
 
-export const checkIfFileIsCollectionFile = (file: TFile, settings: ObsidianPluginMtgSettings): boolean => {
-    try {
-        return file.name.endsWith(settings.collection.fileExtension);
-    } catch (err) {
-        console.log(err);
-        return false;
-    }
-};
-
 export const createCardCountsMapping = async (fileContents: string[], settings: ObsidianPluginMtgSettings) => {
     const counts: CardCounts = {};
     const countsColumnName: string = settings.collection.countColumn;
@@ -63,7 +54,7 @@ export const createCardCountsMapping = async (fileContents: string[], settings: 
 export const processCollectionFiles = async (vault: Vault, settings: ObsidianPluginMtgSettings): Promise<string[]> => {
     return (await Promise.all(
        vault.getFiles()
-            .filter(f => checkIfFileIsCollectionFile(f, settings))
+            .filter(f => f.extension === settings.collection.fileExtension)
             .map((fileContents) => {
                 try {
                     return vault.cachedRead(fileContents);
