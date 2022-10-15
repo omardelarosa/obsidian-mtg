@@ -6,17 +6,17 @@ export interface ObsidianPluginMtgSettings {
 		nameColumn: string;
 		// The name of the column in your csv where your counts are stored
 		countColumn: string;
-        // The number of milliseconds between collection count syncs
-        syncIntervalMs: number;
+		// The number of milliseconds between collection count syncs
+		syncIntervalMs: number;
 	};
 	decklist: {
 		// Card Price Currency:
-		preferredCurrency: 'usd' | 'eur' | 'tix';
+		preferredCurrency: "usd" | "eur" | "tix";
 		// Show hyperlinks
 		showCardNamesAsHyperlinks: boolean;
 		// Show card previews
 		showCardPreviews: boolean;
 		// Show buylist
 		showBuylist: boolean;
-	}
+	};
 }

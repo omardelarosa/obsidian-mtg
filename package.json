@@ -5,7 +5,7 @@
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"lint": "eslint main.ts",
+		"lint": "eslint --fix main.ts",
 		"test": "jest",
 		"verify": "npm run test && npm run lint",
 		"prepare": "husky install",
@@ -30,6 +30,8 @@
 		"jest-environment-jsdom": "^29.1.2",
 		"jsdom": "^20.0.1",
 		"obsidian": "latest",
+		"prettier": "2.7.1",
+		"prettier-eslint": "^15.0.1",
 		"ts-jest": "^29.0.3",
 		"ts-node": "^10.9.1",
 		"tslib": "2.4.0",
