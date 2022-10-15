@@ -197,7 +197,7 @@ export const renderDecklist = async (
 	dataFetcher = fetchCardDataFromScryfall
 ): Promise<Element> => {
 	const containerEl = createDiv(root, {});
-	containerEl.classList.add("obsidian-plugin-mtg__decklist");
+	containerEl.classList.add("decklist");
 
 	const lines: string[] = source.split("\n");
 
@@ -246,13 +246,13 @@ export const renderDecklist = async (
 
 	// Header section
 	const header = createDiv(containerEl, {
-		cls: "obsidian-plugin-mtg__header",
+		cls: "header",
 	});
 
 	const imgElContainer = document.createElement("div");
-	imgElContainer.classList.add("obsidian-plugin-mtg__card-image-container");
+	imgElContainer.classList.add("card-image-container");
 	const imgEl = document.createElement("img");
-	imgEl.classList.add("obsidian-plugin-mtg__card-image");
+	imgEl.classList.add("card-image");
 	imgElContainer.appendChild(imgEl);
 
 	// Attach image container to header
@@ -260,7 +260,7 @@ export const renderDecklist = async (
 
 	// Footer Section
 	const footer = document.createElement("div");
-	footer.classList.add("obsidian-plugin-mtg__footer");
+	footer.classList.add("footer");
 
 	const sectionTotalCounts: Record<string, number> = sections.reduce(
 		(acc, curr) => ({ ...acc, [curr]: 0 }),
@@ -275,39 +275,31 @@ export const renderDecklist = async (
 	sections.forEach((section: string) => {
 		// Put the entire deck in containing div for styling
 		const sectionContainer = document.createElement("div");
-		sectionContainer.classList.add(
-			"obsidian-plugin-mtg__decklist__section-container"
-		);
+		sectionContainer.classList.add("decklist__section-container");
 
 		// Create a heading
 		const sectionHedingEl = document.createElement("h3");
-		sectionHedingEl.classList.add(
-			"obsidian-plugin-mtg__decklist__section-heading"
-		);
+		sectionHedingEl.classList.add("decklist__section-heading");
 		sectionContainer.appendChild(sectionHedingEl);
 
 		// Create container for the list items
 		const sectionList = document.createElement("ul");
-		sectionList.classList.add(
-			"obsidian-plugin-mtg__decklist__section-list"
-		);
+		sectionList.classList.add("decklist__section-list");
 
 		const sectionMissingCardCounts: CardCounts = {};
 
 		// Create line item elements
 		linesBySection[section].forEach((line: Line) => {
 			const lineEl = document.createElement("li");
-			lineEl.classList.add(
-				"obsidian-plugin-mtg__decklist__section-list-item"
-			);
+			lineEl.classList.add("decklist__section-list-item");
 
 			if (line.lineType === "card") {
 				const cardCountEl = createSpan(lineEl, {
-					cls: "obsidian-plugin-mtg__count",
+					cls: "count",
 				});
 
 				const cardNameEl = createSpan(lineEl, {
-					cls: "obsidian-plugin-mtg__card-name",
+					cls: "card-name",
 				});
 
 				// Add hyperlink when possible
@@ -336,18 +328,18 @@ export const renderDecklist = async (
 				let cardErrorsEl = null;
 				if (line.errors && line.errors.length) {
 					cardErrorsEl = createSpan(lineEl, {
-						cls: "obsidian-plugin-mtg__error",
+						cls: "error",
 						text: line.errors?.join(",") || "",
 					});
 				}
 
 				const cardCommentsEl = createSpan(lineEl, {
-					cls: "obsidian-plugin-mtg__comment",
+					cls: "comment",
 					text: line.comments?.join("#") || "",
 				});
 
 				const cardPriceEl = createSpan(lineEl, {
-					cls: "obsidian-plugin-mtg__card-price",
+					cls: "card-price",
 				});
 				let cardPrice;
 				if (line.cardName) {
@@ -367,16 +359,14 @@ export const renderDecklist = async (
 					const counts = createSpan(cardCountEl);
 					// Card error element
 					createSpan(counts, {
-						cls: "obsidian-plugin-mtg__error",
+						cls: "error",
 						text: `${lineGlobalCount}`,
 					});
 					// Card counts row element
 					createSpan(counts, {
 						text: ` / ${lineCardCount}`,
 					});
-					lineEl.classList.add(
-						"obsidian-plugin-mtg__insufficient-count"
-					);
+					lineEl.classList.add("insufficient-count");
 
 					const cardId = nameToId(line.cardName);
 					missingCardCounts[cardId] =
@@ -388,9 +378,7 @@ export const renderDecklist = async (
 						(lineCardCount - lineGlobalCount);
 
 					if (cardPrice) {
-						cardPriceEl.classList.add(
-							"obsidian-plugin-mtg__insufficient-count"
-						);
+						cardPriceEl.classList.add("insufficient-count");
 
 						const totalPrice: number =
 							lineCardCount * parseFloat(cardPrice);
@@ -398,7 +386,7 @@ export const renderDecklist = async (
 							lineGlobalCount * parseFloat(cardPrice);
 
 						const amountOwnedEl = createSpan(cardPriceEl, {
-							cls: "obsidian-plugin-mtg__error",
+							cls: "error",
 							text: `${
 								currencyMapping[
 									settings.decklist.preferredCurrency
@@ -482,7 +470,7 @@ export const renderDecklist = async (
 			} else if (line.lineType === "comment") {
 				// Comments
 				createSpan(lineEl, {
-					cls: "obsidian-plugin-mtg__comment",
+					cls: "comment",
 					text: line.comments?.join(" ") || "",
 				});
 
@@ -498,7 +486,7 @@ export const renderDecklist = async (
 		sectionContainer.appendChild(horizontalDividorEl);
 
 		const totalsEl = createDiv(sectionContainer, {
-			cls: "obsidian-plugin-mtg__decklist__section-totals",
+			cls: "decklist__section-totals",
 		});
 
 		const sectionMissingCardIds = Object.keys(sectionMissingCardCounts);
@@ -518,19 +506,17 @@ export const renderDecklist = async (
 
 			// Errors
 			createSpan(totalCardsEl, {
-				cls: "obsidian-plugin-mtg__error",
+				cls: "error",
 				text: `${totalCardsOwned}`,
 			});
 
 			// Counts
 			createSpan(totalCardsEl, {
-				cls: "obsidian-plugin-mtg__insufficient-count",
+				cls: "insufficient-count",
 				text: ` / ${sectionTotalCounts[section]}`,
 			});
 
-			totalCardsEl.classList.add(
-				"obsidian-plugin-mtg__decklist__section-totals__count"
-			);
+			totalCardsEl.classList.add("decklist__section-totals__count");
 
 			const totalMissingCostInSection = Object.keys(
 				sectionMissingCardCounts
@@ -547,7 +533,7 @@ export const renderDecklist = async (
 				const totalValueOwned =
 					sectionTotalCost[section] - totalMissingCostInSection;
 				const totalValueOwnedEl = createSpan(totalCostEl, {
-					cls: "obsidian-plugin-mtg__error",
+					cls: "error",
 					text: `${
 						currencyMapping[settings.decklist.preferredCurrency]
 					}${totalValueOwned.toFixed(2)}`,
@@ -555,7 +541,7 @@ export const renderDecklist = async (
 
 				// Total value needed
 				createSpan(totalCostEl, {
-					cls: "obsidian-plugin-mtg__insufficient-count",
+					cls: "insufficient-count",
 					text: ` / ${
 						currencyMapping[settings.decklist.preferredCurrency]
 					}${sectionTotalCost[section].toFixed(2)}`,
@@ -564,9 +550,7 @@ export const renderDecklist = async (
 
 			// Otherwise show simple values
 		} else {
-			totalCardsEl.classList.add(
-				"obsidian-plugin-mtg__decklist__section-totals__count"
-			);
+			totalCardsEl.classList.add("decklist__section-totals__count");
 			totalCardsEl.textContent = `${sectionTotalCounts[section]}`;
 			totalCostEl.textContent = `${
 				currencyMapping[settings.decklist.preferredCurrency]
@@ -576,7 +560,7 @@ export const renderDecklist = async (
 		totalsEl.appendChild(totalCardsEl);
 
 		const totalCardsUnitEl = createSpan(totalsEl, {
-			cls: "obsidian-plugin-mtg__card-name",
+			cls: "card-name",
 			text: "cards",
 		});
 
@@ -602,12 +586,10 @@ export const renderDecklist = async (
 	if (buylistCardIds.length && settings.decklist.showBuylist) {
 		// Build Buylist
 		const buylist = document.createElement("div");
-		buylist.classList.add("obsidian-plugin-mtg__buylist-container");
+		buylist.classList.add("buylist-container");
 
 		const buylistHeader = document.createElement("h3");
-		buylistHeader.classList.add(
-			"obsidian-plugin-mtg__decklist__section-heading"
-		);
+		buylistHeader.classList.add("decklist__section-heading");
 		buylistHeader.textContent = "Buylist: ";
 
 		buylist.appendChild(buylistHeader);
@@ -617,12 +599,12 @@ export const renderDecklist = async (
 		buylistCardIds.forEach((cardId) => {
 			const cardInfo = cardDataByCardId[cardId];
 			const buylistLineEl = document.createElement("div");
-			buylistLineEl.classList.add("obsidian-plugin-mtg__buylist-line");
+			buylistLineEl.classList.add("buylist-line");
 
 			const countNeeded = missingCardCounts[cardId];
 
 			const countEl = createSpan(buylistLineEl, {
-				cls: "obsidian-plugin-mtg__decklist__section-totals__count",
+				cls: "decklist__section-totals__count",
 				text: `${countNeeded}`,
 			});
 
@@ -630,7 +612,7 @@ export const renderDecklist = async (
 				const cardName = cardInfo.name || "";
 
 				const cardNameEl = createSpan(buylistLineEl, {
-					cls: "obsidian-plugin-mtg__card-name",
+					cls: "card-name",
 				});
 
 				// Add hyperlink when possible
@@ -711,7 +693,7 @@ export const renderDecklist = async (
 			} else {
 				// Card name
 				createSpan(buylistLineEl, {
-					cls: "obsidian-plugin-mtg__card-name",
+					cls: "card-name",
 					text: cardId || UNKNOWN_CARD,
 				});
 
@@ -723,24 +705,24 @@ export const renderDecklist = async (
 		buylist.appendChild(horizontalDividorEl);
 
 		const buylistLineEl = document.createElement("div");
-		buylistLineEl.classList.add("obsidian-plugin-mtg__buylist-line");
+		buylistLineEl.classList.add("buylist-line");
 
 		// countEl
 		createSpan(buylistLineEl, {
-			cls: "obsidian-plugin-mtg__decklist__section-totals__count",
+			cls: "decklist__section-totals__count",
 			text: `${buylistCardCounts} `,
 		});
 
 		// cardNameEl
 		createSpan(buylistLineEl, {
-			cls: "obsidian-plugin-mtg__card-name",
+			cls: "card-name",
 			text: "cards",
 		});
 
 		let totalPriceEl = null;
 		if (hasCardInfo) {
 			totalPriceEl = createSpan(buylistLineEl, {
-				cls: "obsidian-plugin-mtg__decklist__section-totals",
+				cls: "decklist__section-totals",
 				text: `${
 					currencyMapping[settings.decklist.preferredCurrency]
 				}${totalCostOfBuylist.toFixed(2)}`,
