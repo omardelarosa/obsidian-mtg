@@ -68,15 +68,15 @@ export const processCollectionFiles = async (
 			await Promise.all(
 				vault
 					.getFiles()
-					.filter(
-						(f) => {
-                            if (f.extension === 'csv') {
-                                return f.name.endsWith(`${settings.collection.fileExtension}`);
-                            } else {
-                                return false;
-                            }
-                        }
-					)
+					.filter((f) => {
+						if (f.extension === "csv") {
+							return f.name.endsWith(
+								`${settings.collection.fileExtension}`
+							);
+						} else {
+							return false;
+						}
+					})
 					.map((fileContents) => {
 						try {
 							return vault.cachedRead(fileContents);

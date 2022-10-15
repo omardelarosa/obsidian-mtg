@@ -6,8 +6,10 @@
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"lint": "eslint --fix main.ts",
+		"format": "npx prettier --write . ",
+		"format-check": "npx prettier --check .",
 		"test": "jest",
-		"verify": "npm run test && npm run lint",
+		"verify": "npm run test && npm run lint && npm run format-check",
 		"prepare": "husky install",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"

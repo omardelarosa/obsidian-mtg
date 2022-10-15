@@ -6,7 +6,7 @@ import {
 	ScryfallResponse,
 } from "./scryfall";
 import { ObsidianPluginMtgSettings } from "./settings";
-import { createDiv, createSpan } from './dom-utils';
+import { createDiv, createSpan } from "./dom-utils";
 
 const DEFAULT_SECTION_NAME = "Deck:";
 const COMMENT_DELIMITER = "#";
@@ -190,13 +190,13 @@ export const fetchCardDataFromScryfall = async (
 };
 
 export const renderDecklist = async (
-    root: Element,
+	root: Element,
 	source: string,
 	cardCounts: CardCounts,
 	settings: ObsidianPluginMtgSettings,
 	dataFetcher = fetchCardDataFromScryfall
 ): Promise<Element> => {
-    const containerEl = createDiv(root, {});
+	const containerEl = createDiv(root, {});
 	containerEl.classList.add("obsidian-plugin-mtg__decklist");
 
 	const lines: string[] = source.split("\n");
@@ -245,7 +245,9 @@ export const renderDecklist = async (
 	const sectionContainers: Element[] = [];
 
 	// Header section
-	const header = createDiv(containerEl, { cls: 'obsidian-plugin-mtg__header'});
+	const header = createDiv(containerEl, {
+		cls: "obsidian-plugin-mtg__header",
+	});
 
 	const imgElContainer = document.createElement("div");
 	imgElContainer.classList.add("obsidian-plugin-mtg__card-image-container");
@@ -257,7 +259,7 @@ export const renderDecklist = async (
 	header.appendChild(imgElContainer);
 
 	// Footer Section
-	const footer = document.createElement('div');
+	const footer = document.createElement("div");
 	footer.classList.add("obsidian-plugin-mtg__footer");
 
 	const sectionTotalCounts: Record<string, number> = sections.reduce(
@@ -363,13 +365,13 @@ export const renderDecklist = async (
 				// Show missing card counts
 				if (lineGlobalCount !== -1 && lineCardCount > lineGlobalCount) {
 					const counts = createSpan(cardCountEl);
-                    // Card error element
+					// Card error element
 					createSpan(counts, {
 						cls: "obsidian-plugin-mtg__error",
 						text: `${lineGlobalCount}`,
 					});
 					// Card counts row element
-                    createSpan(counts, {
+					createSpan(counts, {
 						text: ` / ${lineCardCount}`,
 					});
 					lineEl.classList.add(
@@ -394,7 +396,7 @@ export const renderDecklist = async (
 							lineCardCount * parseFloat(cardPrice);
 						const amountOwned: number =
 							lineGlobalCount * parseFloat(cardPrice);
-                            
+
 						const amountOwnedEl = createSpan(cardPriceEl, {
 							cls: "obsidian-plugin-mtg__error",
 							text: `${
@@ -404,7 +406,7 @@ export const renderDecklist = async (
 							}${amountOwned.toFixed(2)}`,
 						});
 
-                        // totalPriceEl
+						// totalPriceEl
 						createSpan(cardPriceEl, {
 							text: ` / ${
 								currencyMapping[
@@ -479,7 +481,7 @@ export const renderDecklist = async (
 				sectionList.appendChild(lineEl);
 			} else if (line.lineType === "comment") {
 				// Comments
-                createSpan(lineEl, {
+				createSpan(lineEl, {
 					cls: "obsidian-plugin-mtg__comment",
 					text: line.comments?.join(" ") || "",
 				});
@@ -514,13 +516,13 @@ export const renderDecklist = async (
 			const totalCardsOwned =
 				sectionTotalCounts[section] - totalMissingCountInSection;
 
-            // Errors
+			// Errors
 			createSpan(totalCardsEl, {
 				cls: "obsidian-plugin-mtg__error",
 				text: `${totalCardsOwned}`,
 			});
 
-            // Counts
+			// Counts
 			createSpan(totalCardsEl, {
 				cls: "obsidian-plugin-mtg__insufficient-count",
 				text: ` / ${sectionTotalCounts[section]}`,
@@ -551,7 +553,7 @@ export const renderDecklist = async (
 					}${totalValueOwned.toFixed(2)}`,
 				});
 
-                // Total value needed
+				// Total value needed
 				createSpan(totalCostEl, {
 					cls: "obsidian-plugin-mtg__insufficient-count",
 					text: ` / ${
@@ -620,16 +622,16 @@ export const renderDecklist = async (
 			const countNeeded = missingCardCounts[cardId];
 
 			const countEl = createSpan(buylistLineEl, {
-                cls: 'obsidian-plugin-mtg__decklist__section-totals__count',
-                text: `${countNeeded}`
-            });
+				cls: "obsidian-plugin-mtg__decklist__section-totals__count",
+				text: `${countNeeded}`,
+			});
 
 			if (cardInfo) {
 				const cardName = cardInfo.name || "";
 
 				const cardNameEl = createSpan(buylistLineEl, {
-                    cls: 'obsidian-plugin-mtg__card-name'
-                });
+					cls: "obsidian-plugin-mtg__card-name",
+				});
 
 				// Add hyperlink when possible
 				if (
@@ -654,20 +656,20 @@ export const renderDecklist = async (
 				totalCostOfBuylist =
 					totalCostOfBuylist + cardPrice * countNeeded;
 
-                // Totals element
+				// Totals element
 				createSpan(buylistLineEl, {
-                    text: ' ' // This foils copy pasting
-                });
+					text: " ", // This foils copy pasting
+				});
 
-                // TODO: Add prices back when the buylist can be copy-pasted
-                // createSpan(buylistLineEl, {
-                //     cls: '',
-                //     text: `${
-                //         currencyMapping[settings.decklist.preferredCurrency]
-                //     }${(cardPrice * countNeeded).toFixed(2)}`
-                // });
+				// TODO: Add prices back when the buylist can be copy-pasted
+				// createSpan(buylistLineEl, {
+				//     cls: '',
+				//     text: `${
+				//         currencyMapping[settings.decklist.preferredCurrency]
+				//     }${(cardPrice * countNeeded).toFixed(2)}`
+				// });
 
-                if (settings.decklist.showCardPreviews) {
+				if (settings.decklist.showCardPreviews) {
 					// Event handlers for card artwork popover
 					buylistLineEl.addEventListener("mouseenter", () => {
 						const cardId = nameToId(cardName);
@@ -690,7 +692,10 @@ export const renderDecklist = async (
 							imgElContainer.style.top = `${
 								buylistLineEl.offsetTop + offsetPaddingTop
 							}px`;
-							imgElContainer.style.left = `${cardNameEl.offsetLeft + Math.round(cardNameEl.innerWidth / 2)}px`;
+							imgElContainer.style.left = `${
+								cardNameEl.offsetLeft +
+								Math.round(cardNameEl.innerWidth / 2)
+							}px`;
 						}
 						if (typeof imgUri !== "undefined") {
 							imgEl.src = imgUri;
@@ -701,14 +706,14 @@ export const renderDecklist = async (
 						imgEl.src = "";
 					});
 				}
-                
+
 				buylist.appendChild(buylistLineEl);
 			} else {
 				// Card name
-                createSpan(buylistLineEl, {
-                    cls: 'obsidian-plugin-mtg__card-name',
-                    text: cardId || UNKNOWN_CARD
-                });
+				createSpan(buylistLineEl, {
+					cls: "obsidian-plugin-mtg__card-name",
+					text: cardId || UNKNOWN_CARD,
+				});
 
 				buylist.appendChild(buylistLineEl);
 			}
@@ -720,26 +725,26 @@ export const renderDecklist = async (
 		const buylistLineEl = document.createElement("div");
 		buylistLineEl.classList.add("obsidian-plugin-mtg__buylist-line");
 
-        // countEl
+		// countEl
 		createSpan(buylistLineEl, {
-            cls: 'obsidian-plugin-mtg__decklist__section-totals__count',
-            text: `${buylistCardCounts} `
-        });
+			cls: "obsidian-plugin-mtg__decklist__section-totals__count",
+			text: `${buylistCardCounts} `,
+		});
 
-        // cardNameEl
+		// cardNameEl
 		createSpan(buylistLineEl, {
-            cls: 'obsidian-plugin-mtg__card-name',
-            text: 'cards'
-        });
+			cls: "obsidian-plugin-mtg__card-name",
+			text: "cards",
+		});
 
 		let totalPriceEl = null;
 		if (hasCardInfo) {
 			totalPriceEl = createSpan(buylistLineEl, {
-                cls: 'obsidian-plugin-mtg__decklist__section-totals',
-                text: `${
-                    currencyMapping[settings.decklist.preferredCurrency]
-                }${totalCostOfBuylist.toFixed(2)}`
-            });
+				cls: "obsidian-plugin-mtg__decklist__section-totals",
+				text: `${
+					currencyMapping[settings.decklist.preferredCurrency]
+				}${totalCostOfBuylist.toFixed(2)}`,
+			});
 		}
 
 		buylist.appendChild(buylistLineEl);

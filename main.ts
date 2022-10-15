@@ -66,7 +66,7 @@ export default class ObsidianPluginMtg extends Plugin {
 					console.log(err);
 					const errorNode = document.createDiv({
 						text: error,
-						cls: 'obsidian-plugin-mtg-error'
+						cls: "obsidian-plugin-mtg-error",
 					});
 					el.appendChild(errorNode);
 				}

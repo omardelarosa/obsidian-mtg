@@ -4,7 +4,11 @@ import { JSDOM } from "jsdom";
 import { ObsidianPluginMtgSettings } from "./settings";
 import { EXAMPLE_DECKLIST_CARD_DATA } from "../jest/fixtures/scryfall-data";
 import { CardData } from "./scryfall";
-import { EXAMPLE_COLLECTION, EXAMPLE_DECK_1, EXAMPLE_DECK_1_HTML } from "../jest/fixtures/content";
+import {
+	EXAMPLE_COLLECTION,
+	EXAMPLE_DECK_1,
+	EXAMPLE_DECK_1_HTML,
+} from "../jest/fixtures/content";
 
 const dom = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`);
 const doc = dom.window.document;
@@ -35,7 +39,7 @@ describe("Renderer", () => {
 	describe("#renderDecklist", () => {
 		test("", async () => {
 			const el = await renderDecklist(
-                doc.body,
+				doc.body,
 				EXAMPLE_DECK_1,
 				EXAMPLE_COLLECTION,
 				settings,
