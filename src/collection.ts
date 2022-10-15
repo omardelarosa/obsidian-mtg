@@ -5,7 +5,7 @@ import { parse } from 'csv-parse/sync';
 
 export type CardCounts = Record<string, number>
 
-export const DEFAULT_COLLECTION_FILE_EXTENSION = '.mtg.collection.csv';
+export const DEFAULT_COLLECTION_FILE_EXTENSION = 'mtg.collection.csv';
 export const DEFAULT_COLLECTION_NAME_COLUMN = 'Name';
 export const DEFAULT_COLLECTION_COUNT_COLUMN = 'Count';
 export const DEFAULT_COLLECTION_SYNC_INTERVAL = 5000;
