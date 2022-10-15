@@ -1,7 +1,6 @@
-import { TFile, Vault } from "obsidian";
+import { Vault } from "obsidian";
+import { parseCsvFile } from "./csv";
 import { ObsidianPluginMtgSettings } from "./settings";
-
-import { parse } from "csv-parse/sync";
 
 export type CardCounts = Record<string, number>;
 
@@ -34,8 +33,7 @@ export const createCardCountsMapping = async (
 
 	const recordsList: Record<string, string>[][] = fileContents.map(
 		(fileContent) => {
-			const records = parse(fileContent, {
-				columns: true,
+			const records = parseCsvFile(fileContent, {
 				skip_empty_lines: true,
 			});
 			return records;
