@@ -5,30 +5,6 @@ const querystring = require("querystring");
 // This is the maximum number of cards that can be requested at the same time
 export const MAX_SCRYFALL_BATCH_SIZE = 75;
 
-const BASE_URL = "https://api.scryfall.com";
-
-const FORMAT_NAMES = [
-	"standard",
-	"future",
-	"historic",
-	"gladiator",
-	"pioneer",
-	"explorer",
-	"modern",
-	"legacy",
-	"pauper",
-	"vintage",
-	"penny",
-	"commander",
-	"brawl",
-	"historicbrawl",
-	"alchemy",
-	"paupercommander",
-	"duel",
-	"oldschool",
-	"premodern",
-];
-
 export interface CardFace {
 	object?: string; // card_face
 	name?: string;
