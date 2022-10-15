@@ -1,13 +1,15 @@
 {
 	"name": "obsidian-mtg",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"lint": "eslint main.ts",
+		"lint": "eslint --fix main.ts",
+		"format": "npx prettier --write . ",
+		"format-check": "npx prettier --check .",
 		"test": "jest",
-		"verify": "npm run test && npm run lint",
+		"verify": "npm run test && npm run lint && npm run format-check",
 		"prepare": "husky install",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
@@ -30,12 +32,12 @@
 		"jest-environment-jsdom": "^29.1.2",
 		"jsdom": "^20.0.1",
 		"obsidian": "latest",
+		"prettier": "2.7.1",
+		"prettier-eslint": "^15.0.1",
 		"ts-jest": "^29.0.3",
 		"ts-node": "^10.9.1",
 		"tslib": "2.4.0",
 		"typescript": "4.7.4"
 	},
-	"dependencies": {
-		"csv": "^6.2.0"
-	}
+	"dependencies": {}
 }

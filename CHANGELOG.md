@@ -31,3 +31,12 @@
 - ![](docs/img/changes/2022-10-10_changelog2.2.png)
     - Added feature flags in settings for image previews, hyperlinks and currency options for prices.
 - Refactored multiple parts of the `renderer.ts` module.
+
+## 2022-10-15
+- Refactoring based on Community Plugin PR feedback:
+    - remove the references to `innerHTML`
+    - remove the leading dot from the file extension
+    - using the TFile extension param instead of custom function
+    - adding Prettier formatting and switching over to use createSpan,createDiv
+    - adding custom csv parsing functions to remove `csv` dependency
+    - removing `obsidian-plugin-mtg__` css prefix
