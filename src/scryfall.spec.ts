@@ -1,6 +1,6 @@
 import { describe, expect, test, jest } from "@jest/globals";
-import { RequestOptions } from "https";
-import { getCardData, getMultipleCardData } from "./scryfall";
+
+import { getCardData, getMultipleCardData, RequestOptions } from "./scryfall";
 import {
 	EXAMPLE_MULTI_CARD_RESPONSE,
 	EXAMPLE_SCRYFALL_RESPONSE_1,
@@ -26,8 +26,7 @@ describe("Scryfall", () => {
 	describe("#getMultipleCardData()", () => {
 		test("for a single card", async () => {
 			function httpReq<ScryfallResponse>(
-				options: RequestOptions,
-				postBody: string
+				options: RequestOptions
 			): Promise<ScryfallResponse> {
 				return new Promise((res) => {
 					res(
