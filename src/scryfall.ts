@@ -1,6 +1,15 @@
-import { request as httpsRequest, RequestOptions } from "https";
+import { promiseWrappedRequest } from "./http";
 
 const querystring = require("querystring");
+
+export interface RequestOptions {
+	url: string;
+	method?: string;
+	body?: string;
+	contentType?: string;
+}
+
+export type Request = <T>(options: RequestOptions) => Promise<T>;
 
 // This is the maximum number of cards that can be requested at the same time
 export const MAX_SCRYFALL_BATCH_SIZE = 75;
@@ -127,71 +136,20 @@ export interface ScryfallResponse {
 	total_cards: number;
 }
 
-export function promiseWrappedGetRequest<T>(
-	options: RequestOptions
-): Promise<T> {
-	return new Promise((resolve, reject) => {
-		const req = httpsRequest(options, (response: any) => {
-			response.setEncoding("utf8");
-			let chunks: string = "";
-			response.on("data", (chunk: string) => {
-				chunks += chunk;
-			});
-			response.on("end", () => {
-				resolve(JSON.parse(chunks) as T);
-			});
-		});
-
-		req.on("error", (err: any) => {
-			reject(err);
-		});
-
-		req.end();
-	});
-}
-
-export function promiseWrappedPostRequest<T>(
-	options: RequestOptions,
-	postData: string
-): Promise<T> {
-	return new Promise((resolve, reject) => {
-		const req = httpsRequest(options, (response: any) => {
-			response.setEncoding("utf8");
-			let chunks: string = "";
-			response.on("data", (chunk: string) => {
-				chunks += chunk;
-			});
-			response.on("end", () => {
-				resolve(JSON.parse(chunks) as T);
-			});
-		});
-
-		req.on("error", (err: any) => {
-			reject(err);
-		});
-
-		// Write POST body
-		req.write(postData);
-
-		req.end();
-	});
-}
-
 export const getCardData = async (
 	cardName: string,
-	request = promiseWrappedGetRequest
+	request = promiseWrappedRequest
 ): Promise<ScryfallResponse> => {
 	const query: string = querystring.stringify({ q: cardName });
-	const params = {
-		hostname: "api.scryfall.com",
-		path: `/cards/search?${query}`,
+	const params: RequestOptions = {
+		url: `https://api.scryfall.com/cards/search?${query}`,
 	};
 	return request(params);
 };
 
 export const getMultipleCardData = async (
 	cardNames: string[],
-	request = promiseWrappedPostRequest
+	request = promiseWrappedRequest
 ): Promise<ScryfallResponse> => {
 	const cardIdentifiers = cardNames.map((cardName) => ({
 		name: cardName,
@@ -202,14 +160,11 @@ export const getMultipleCardData = async (
 	});
 
 	const params: RequestOptions = {
-		hostname: "api.scryfall.com",
-		path: "/cards/collection",
+		url: "https://api.scryfall.com/cards/collection",
 		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			"Content-Length": Buffer.byteLength(postData),
-		},
+		body: postData,
+		contentType: "application/json",
 	};
 
-	return request(params, postData);
+	return request(params);
 };

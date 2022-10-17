@@ -40,3 +40,6 @@
     - adding Prettier formatting and switching over to use createSpan,createDiv
     - adding custom csv parsing functions to remove `csv` dependency
     - removing `obsidian-plugin-mtg__` css prefix
+
+## 2022-10-16
+- Replacing node HTTP library with `obsidian.requestUrl`
