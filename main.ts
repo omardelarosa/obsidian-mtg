@@ -27,6 +27,7 @@ const DEFAULT_SETTINGS: ObsidianPluginMtgSettings = {
 export default class ObsidianPluginMtg extends Plugin {
 	settings: ObsidianPluginMtgSettings;
 
+	// This keeps a record of the collection in memory
 	cardCounts: Record<string, number>;
 
 	async onload() {
@@ -37,22 +38,30 @@ export default class ObsidianPluginMtg extends Plugin {
 
 		const { vault } = this.app;
 
-		// Initialize counts
-		this.cardCounts = await syncCounts(vault, this.settings);
+		vault.on("modify", async (f) => {
+			if (f.name.endsWith("csv")) {
+				const settings = this.settings;
+				const collectionFileExt =
+					settings.collection?.fileExtension || "";
+				if (f.name.endsWith(collectionFileExt)) {
+					this.cardCounts = await syncCounts(vault, settings);
+				}
+			}
+		});
 
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(
-			window.setInterval(async () => {
-				this.cardCounts = await syncCounts(vault, this.settings);
-			}, DEFAULT_COLLECTION_SYNC_INTERVAL)
-		);
+		this.app.workspace.onLayoutReady(async () => {
+			this.cardCounts = await syncCounts(vault, this.settings);
+		});
 
 		this.registerMarkdownCodeBlockProcessor(
 			"mtg-deck",
 			async (source: string, el: HTMLElement, ctx) => {
 				let error = null;
 
-				this.cardCounts = await syncCounts(vault, this.settings);
+				// Sync card counts once if they haven't been already
+				if (!this.cardCounts) {
+					this.cardCounts = await syncCounts(vault, this.settings);
+				}
 
 				try {
 					await renderDecklist(
