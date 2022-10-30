@@ -43,3 +43,6 @@
 
 ## 2022-10-16
 - Replacing node HTTP library with `obsidian.requestUrl`
+
+## 2022-10-30
+- Reducing the number of times collection is synced from file system to improve performance
