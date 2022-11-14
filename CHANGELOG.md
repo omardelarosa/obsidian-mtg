@@ -46,3 +46,6 @@
 
 ## 2022-10-30
 - Reducing the number of times collection is synced from file system to improve performance
+
+## 2022-11-13
+- Fixing the `modify` event callback's CSV file extension string pattern to include the `.` and avoid false matches

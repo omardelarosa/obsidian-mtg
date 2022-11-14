@@ -39,7 +39,7 @@ export default class ObsidianPluginMtg extends Plugin {
 		const { vault } = this.app;
 
 		vault.on("modify", async (f) => {
-			if (f.name.endsWith("csv")) {
+			if (f.name.endsWith(".csv")) {
 				const settings = this.settings;
 				const collectionFileExt =
 					settings.collection?.fileExtension || "";
