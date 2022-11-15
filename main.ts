@@ -148,7 +148,7 @@ class ObsidianPluginMtgSettingsTab extends PluginSettingTab {
 			.addText((text) =>
 				text
 					.setPlaceholder("Count")
-					.setValue(this.plugin.settings.collection.nameColumn)
+					.setValue(this.plugin.settings.collection.countColumn)
 					.onChange(async (value) => {
 						this.plugin.settings.collection.countColumn = value;
 						await this.plugin.saveSettings();
