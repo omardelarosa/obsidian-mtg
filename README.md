@@ -4,7 +4,7 @@ This is a plugin to manage your Magic: The Gathering card collections and decks 
 
 ## Decklists
 
-Using the `mtg-decklist` syntax hint in any Markdown file, you can define your decklists as follows:
+Using the `mtg-deck` syntax hint in any Markdown file, you can define your decklists as follows:
 
 ```mtgdeck
 4 Delver of Secrets // Insectile Aberration
