@@ -73,7 +73,7 @@ span.comment {
 }
 
 .card-image {
-	height: 180px;
+	height: 400px;
 }
 
 .buylist-container {
@@ -122,4 +122,9 @@ span.comment {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+}
+
+.markdown-source-view.mod-cm6 .cm-preview-code-block:has(> .block-language-mtg-deck) {
+    overflow: visible;
+    contain: initial !important;
 }
