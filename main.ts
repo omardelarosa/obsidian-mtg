@@ -118,7 +118,7 @@ class ObsidianPluginMtgSettingsTab extends PluginSettingTab {
 		// Collection CSV setting
 		new Setting(containerEl)
 			.setName("Collection CSV")
-			.setDesc("Path to your collection as a CSV file")
+			.setDesc("The file extension of your collection as a CSV file")
 			.addText((text) =>
 				text
 					.setPlaceholder(".mtg.collection.csv")
