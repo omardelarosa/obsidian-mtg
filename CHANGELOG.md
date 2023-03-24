@@ -49,3 +49,9 @@
 
 ## 2022-11-13
 - Fixing the `modify` event callback's CSV file extension string pattern to include the `.` and avoid false matches
+
+## 2023-03-24
+- Merging two PRs:
+    - [PR 20 - Correct README and settings display](https://github.com/omardelarosa/obsidian-mtg/pull/20)
+    - [PR 22 - Allow cards to render past the box and makes default card size much bigger](https://github.com/omardelarosa/obsidian-mtg/pull/22)
+- Updating the "Collection CSV" hint text to better describe what it does.

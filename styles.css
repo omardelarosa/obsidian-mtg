@@ -124,7 +124,8 @@ span.comment {
 	justify-content: space-between;
 }
 
-.markdown-source-view.mod-cm6 .cm-preview-code-block:has(> .block-language-mtg-deck) {
-    overflow: visible;
-    contain: initial !important;
+.markdown-source-view.mod-cm6
+	.cm-preview-code-block:has(> .block-language-mtg-deck) {
+	overflow: visible;
+	contain: initial !important;
 }
