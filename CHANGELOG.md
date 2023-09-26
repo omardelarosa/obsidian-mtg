@@ -1,5 +1,10 @@
 # Changelog
 
+## 2023-09-25
+- Adds support for larger decks by fixing batch request issue (#26 )
+- Fixes Moxfield CSV import
+- Adds `hidePrices` option (#25 )
+
 ## 2022-09-24
 - ![](docs/img/changes/2022-09-24_changelog1.png)
     - Updated the look of "insufficient" card state to just a red styling on the numeric count.

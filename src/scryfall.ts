@@ -151,6 +151,18 @@ export const getMultipleCardData = async (
 	cardNames: string[],
 	request = promiseWrappedRequest
 ): Promise<ScryfallResponse> => {
+	if (cardNames.length === 0) {
+		// Return an empty response
+		return new Promise((resolve, reject) => {
+			resolve({
+				data: [],
+				has_more: false,
+				object: "list",
+				total_cards: 0,
+			} as ScryfallResponse);
+		});
+	}
+
 	const cardIdentifiers = cardNames.map((cardName) => ({
 		name: cardName,
 	}));

@@ -21,6 +21,7 @@ const DEFAULT_SETTINGS: ObsidianPluginMtgSettings = {
 		showCardNamesAsHyperlinks: true,
 		showCardPreviews: true,
 		showBuylist: true,
+		hidePrices: false,
 	},
 };
 
@@ -212,6 +213,18 @@ class ObsidianPluginMtgSettingsTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.decklist.showBuylist)
 					.onChange(async (value: boolean) => {
 						this.plugin.settings.decklist.showBuylist = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Show Prices")
+			.setDesc("Displays card prices in decklists")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.decklist.hidePrices)
+					.onChange(async (value: boolean) => {
+						this.plugin.settings.decklist.hidePrices = value;
 						await this.plugin.saveSettings();
 					})
 			);

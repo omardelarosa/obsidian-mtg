@@ -43,7 +43,8 @@ export const getCardPrice = (
 	const cardId = nameToId(cardName);
 	const cardData = cardDataById[cardId];
 	const preferredCurrency = settings.decklist.preferredCurrency;
-	if (!cardData) {
+	const hidePrices = settings.decklist.hidePrices;
+	if (!cardData || hidePrices) {
 		return null;
 	} else {
 		if (preferredCurrency === "eur") {
@@ -161,8 +162,11 @@ export const fetchCardDataFromScryfall = async (
 	const batches: string[][] = [];
 	let currentBatch: string[] = [];
 	batches.push(currentBatch);
-	distinctCardNames.forEach((cardName: string) => {
-		if (currentBatch.length === MAX_SCRYFALL_BATCH_SIZE) {
+	distinctCardNames.forEach((cardName: string, idx: number) => {
+		if (
+			currentBatch.length === MAX_SCRYFALL_BATCH_SIZE ||
+			idx == distinctCardNames.length - 1
+		) {
 			batches.push(currentBatch);
 			// Make new batch
 			currentBatch = [];
@@ -582,6 +586,7 @@ export const renderDecklist = async (
 		(acc, val) => acc + val,
 		0
 	);
+	``;
 	// Only show the buylist element when there are missing cards
 	if (buylistCardIds.length && settings.decklist.showBuylist) {
 		// Build Buylist
@@ -596,39 +601,26 @@ export const renderDecklist = async (
 
 		let totalCostOfBuylist = 0.0;
 
+		let buylistLines = "";
+
 		buylistCardIds.forEach((cardId) => {
 			const cardInfo = cardDataByCardId[cardId];
-			const buylistLineEl = document.createElement("div");
-			buylistLineEl.classList.add("buylist-line");
+			let buylistLine = "";
 
 			const countNeeded = missingCardCounts[cardId];
 
-			const countEl = createSpan(buylistLineEl, {
-				cls: "decklist__section-totals__count",
-				text: `${countNeeded}`,
-			});
+			// const countEl = createSpan(buylistLineEl, {
+			// 	cls: "decklist__section-totals__count",
+			// 	text: `${countNeeded}`,
+			// });
+
+			// Add count
+			buylistLine += `${countNeeded}` + " ";
 
 			if (cardInfo) {
 				const cardName = cardInfo.name || "";
 
-				const cardNameEl = createSpan(buylistLineEl, {
-					cls: "card-name",
-				});
-
-				// Add hyperlink when possible
-				if (
-					settings.decklist.showCardNamesAsHyperlinks &&
-					cardInfo &&
-					cardInfo.purchase_uris?.tcgplayer
-				) {
-					const cardLinkEl = document.createElement("a");
-					const purchaseUri = cardInfo.purchase_uris?.tcgplayer;
-					cardLinkEl.href = purchaseUri;
-					cardLinkEl.textContent = `${cardName}`;
-					cardNameEl.appendChild(cardLinkEl);
-				} else {
-					cardNameEl.textContent = `${cardName}`;
-				}
+				buylistLine += `${cardName}`;
 
 				// Retrieve price
 				const cardPrice: number = parseFloat(
@@ -638,68 +630,17 @@ export const renderDecklist = async (
 				totalCostOfBuylist =
 					totalCostOfBuylist + cardPrice * countNeeded;
 
-				// Totals element
-				createSpan(buylistLineEl, {
-					text: " ", // This foils copy pasting
-				});
-
-				// TODO: Add prices back when the buylist can be copy-pasted
-				// createSpan(buylistLineEl, {
-				//     cls: '',
-				//     text: `${
-				//         currencyMapping[settings.decklist.preferredCurrency]
-				//     }${(cardPrice * countNeeded).toFixed(2)}`
-				// });
-
-				if (settings.decklist.showCardPreviews) {
-					// Event handlers for card artwork popover
-					buylistLineEl.addEventListener("mouseenter", () => {
-						const cardId = nameToId(cardName);
-						const cardInfo = cardDataByCardId[cardId];
-						let imgUri: string | undefined;
-						if (cardInfo) {
-							// For single-faced cards...
-							if (cardInfo.image_uris) {
-								imgUri = cardInfo.image_uris?.large;
-								// For double-faced cards...
-							} else if (
-								cardInfo.card_faces &&
-								cardInfo.card_faces.length > 1
-							) {
-								// Use the front-side of the card for preview
-								imgUri =
-									cardInfo.card_faces[0].image_uris?.large;
-							}
-							const offsetPaddingTop = 16;
-							imgElContainer.style.top = `${
-								buylistLineEl.offsetTop + offsetPaddingTop
-							}px`;
-							imgElContainer.style.left = `${
-								cardNameEl.offsetLeft +
-								Math.round(cardNameEl.innerWidth / 2)
-							}px`;
-						}
-						if (typeof imgUri !== "undefined") {
-							imgEl.src = imgUri;
-						}
-					});
-
-					buylistLineEl.addEventListener("mouseleave", () => {
-						imgEl.src = "";
-					});
-				}
-
-				buylist.appendChild(buylistLineEl);
+				buylistLines += buylistLine + "\n";
 			} else {
-				// Card name
-				createSpan(buylistLineEl, {
-					cls: "card-name",
-					text: cardId || UNKNOWN_CARD,
-				});
-
-				buylist.appendChild(buylistLineEl);
+				// Card name might be unknown
+				buylistLines += buylistLine + `${cardId || UNKNOWN_CARD}\n`;
 			}
 		});
+
+		const buylistPre = document.createElement("pre");
+		buylistPre.textContent = buylistLines;
+
+		buylist.appendChild(buylistPre);
 
 		const horizontalDividorEl = document.createElement("hr");
 		buylist.appendChild(horizontalDividorEl);
@@ -720,7 +661,8 @@ export const renderDecklist = async (
 		});
 
 		let totalPriceEl = null;
-		if (hasCardInfo) {
+		``;
+		if (hasCardInfo && !settings.decklist.hidePrices) {
 			totalPriceEl = createSpan(buylistLineEl, {
 				cls: "decklist__section-totals",
 				text: `${

@@ -59,6 +59,7 @@ describe("Collection", () => {
 				showCardNamesAsHyperlinks: true,
 				showCardPreviews: true,
 				showBuylist: true,
+				hidePrices: false,
 			},
 		};
 		test("handles multiple CSVs", async () => {

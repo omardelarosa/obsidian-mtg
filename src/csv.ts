@@ -72,9 +72,8 @@ export const parseCsvFile = (
 	// Assumes that there is a columns header
 	const lines = fileContent.split("\n");
 	const headerRow = lines[0];
-	const columnNames = headerRow.split(",");
+	const columnNames = headerRow.split(",").map(removeOuterQuotesFromString);
 	const linesOfCells = parseCsvCells(fileContent);
-
 	// Attach the header names to each row
 	return linesOfCells.splice(1).map((cells) => {
 		const obj: Record<string, string> = {};
@@ -85,4 +84,11 @@ export const parseCsvFile = (
 		}
 		return obj;
 	});
+};
+
+export const removeOuterQuotesFromString = (s: string) => {
+	if (s.length > 2 && s[0] === '"' && s[s.length - 1] === '"') {
+		return s.slice(1, s.length - 1);
+	}
+	return s;
 };
