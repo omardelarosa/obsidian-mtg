@@ -161,8 +161,11 @@ export const fetchCardDataFromScryfall = async (
 	const batches: string[][] = [];
 	let currentBatch: string[] = [];
 	batches.push(currentBatch);
-	distinctCardNames.forEach((cardName: string) => {
-		if (currentBatch.length === MAX_SCRYFALL_BATCH_SIZE) {
+	distinctCardNames.forEach((cardName: string, idx: number) => {
+		if (
+			currentBatch.length === MAX_SCRYFALL_BATCH_SIZE ||
+			idx == distinctCardNames.length - 1
+		) {
 			batches.push(currentBatch);
 			// Make new batch
 			currentBatch = [];
