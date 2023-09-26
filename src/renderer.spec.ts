@@ -8,6 +8,7 @@ import {
 	EXAMPLE_COLLECTION,
 	EXAMPLE_DECK_1,
 	EXAMPLE_DECK_1_HTML,
+	EXAMPLE_DECK_1_HTML_WITHOUT_PRICES,
 } from "../jest/fixtures/content";
 
 const dom = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`);
@@ -33,11 +34,12 @@ describe("Renderer", () => {
 			showCardNamesAsHyperlinks: true,
 			showCardPreviews: true,
 			showBuylist: true,
+			hidePrices: false,
 		},
 	};
 
 	describe("#renderDecklist", () => {
-		test("", async () => {
+		test("with prices", async () => {
 			const el = await renderDecklist(
 				doc.body,
 				EXAMPLE_DECK_1,
@@ -46,6 +48,25 @@ describe("Renderer", () => {
 				fakeFetcher
 			);
 			expect(el.innerHTML.trim()).toEqual(EXAMPLE_DECK_1_HTML.trim());
+		});
+
+		test("witout prices", async () => {
+			const el = await renderDecklist(
+				doc.body,
+				EXAMPLE_DECK_1,
+				EXAMPLE_COLLECTION,
+				{
+					...settings,
+					decklist: {
+						...settings.decklist,
+						hidePrices: true,
+					},
+				},
+				fakeFetcher
+			);
+			expect(el.innerHTML.trim()).toEqual(
+				EXAMPLE_DECK_1_HTML_WITHOUT_PRICES.trim()
+			);
 		});
 	});
 });

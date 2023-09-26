@@ -43,7 +43,8 @@ export const getCardPrice = (
 	const cardId = nameToId(cardName);
 	const cardData = cardDataById[cardId];
 	const preferredCurrency = settings.decklist.preferredCurrency;
-	if (!cardData) {
+	const hidePrices = settings.decklist.hidePrices;
+	if (!cardData || hidePrices) {
 		return null;
 	} else {
 		if (preferredCurrency === "eur") {
@@ -589,7 +590,7 @@ export const renderDecklist = async (
 	// Only show the buylist element when there are missing cards
 	if (buylistCardIds.length && settings.decklist.showBuylist) {
 		// Build Buylist
-		const buylist = document.createElement("pre");
+		const buylist = document.createElement("div");
 		buylist.classList.add("buylist-container");
 
 		const buylistHeader = document.createElement("h3");
@@ -660,7 +661,8 @@ export const renderDecklist = async (
 		});
 
 		let totalPriceEl = null;
-		if (hasCardInfo) {
+		``;
+		if (hasCardInfo && !settings.decklist.hidePrices) {
 			totalPriceEl = createSpan(buylistLineEl, {
 				cls: "decklist__section-totals",
 				text: `${

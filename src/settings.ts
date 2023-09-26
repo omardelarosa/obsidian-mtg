@@ -18,5 +18,7 @@ export interface ObsidianPluginMtgSettings {
 		showCardPreviews: boolean;
 		// Show buylist
 		showBuylist: boolean;
+		// Show prices
+		hidePrices: boolean;
 	};
 }
