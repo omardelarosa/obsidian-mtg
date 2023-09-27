@@ -218,7 +218,7 @@ class ObsidianPluginMtgSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Show Prices")
+			.setName("Hide Prices")
 			.setDesc("Displays card prices in decklists")
 			.addToggle((toggle) =>
 				toggle

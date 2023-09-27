@@ -1,5 +1,10 @@
 # Changelog
 
+## 2023-09-27
+- Fixes `Show Prices` display name #28
+- Adds support for larger decks #26
+- Fix z-index issue with card preview
+
 ## 2023-09-25
 - Adds support for larger decks by fixing batch request issue (#26 )
 - Fixes Moxfield CSV import
