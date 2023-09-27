@@ -532,7 +532,7 @@ export const renderDecklist = async (
 			}, 0.0);
 
 			// Value
-			if (hasCardInfo) {
+			if (hasCardInfo && !settings.decklist.hidePrices) {
 				const totalValueOwned =
 					sectionTotalCost[section] - totalMissingCostInSection;
 				const totalValueOwnedEl = createSpan(totalCostEl, {
@@ -555,9 +555,11 @@ export const renderDecklist = async (
 		} else {
 			totalCardsEl.classList.add("decklist__section-totals__count");
 			totalCardsEl.textContent = `${sectionTotalCounts[section]}`;
-			totalCostEl.textContent = `${
-				currencyMapping[settings.decklist.preferredCurrency]
-			}${sectionTotalCost[section].toFixed(2)}`;
+			if (!settings.decklist.hidePrices) {
+				totalCostEl.textContent = `${
+					currencyMapping[settings.decklist.preferredCurrency]
+				}${sectionTotalCost[section].toFixed(2)}`;
+			}
 		}
 
 		totalsEl.appendChild(totalCardsEl);
@@ -567,7 +569,7 @@ export const renderDecklist = async (
 			text: "cards",
 		});
 
-		if (hasCardInfo) {
+		if (hasCardInfo && !settings.decklist.hidePrices) {
 			totalsEl.appendChild(totalCostEl);
 		}
 
