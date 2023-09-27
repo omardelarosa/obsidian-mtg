@@ -77,6 +77,7 @@ span.comment {
 }
 
 .buylist-container {
+	z-index: 0;
 }
 
 .buylist-line {
@@ -110,6 +111,7 @@ span.comment {
 .card-image-container {
 	text-align: right;
 	position: absolute;
+	z-index: 1;
 }
 
 .buy-button {

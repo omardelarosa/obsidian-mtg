@@ -163,16 +163,15 @@ export const fetchCardDataFromScryfall = async (
 	let currentBatch: string[] = [];
 	batches.push(currentBatch);
 	distinctCardNames.forEach((cardName: string, idx: number) => {
-		if (
-			currentBatch.length === MAX_SCRYFALL_BATCH_SIZE ||
-			idx == distinctCardNames.length - 1
-		) {
+		if (currentBatch.length === MAX_SCRYFALL_BATCH_SIZE) {
 			batches.push(currentBatch);
 			// Make new batch
 			currentBatch = [];
 		}
 		currentBatch.push(nameToId(cardName));
 	});
+	// Add remaining cards
+	batches.push(currentBatch);
 
 	const cardDataInBatches: ScryfallResponse[] = await Promise.all(
 		batches.map((batch) => getMultipleCardData(batch))
@@ -586,7 +585,7 @@ export const renderDecklist = async (
 		(acc, val) => acc + val,
 		0
 	);
-	``;
+
 	// Only show the buylist element when there are missing cards
 	if (buylistCardIds.length && settings.decklist.showBuylist) {
 		// Build Buylist
@@ -638,6 +637,7 @@ export const renderDecklist = async (
 		});
 
 		const buylistPre = document.createElement("pre");
+		buylistPre.classList.add("buylist-container");
 		buylistPre.textContent = buylistLines;
 
 		buylist.appendChild(buylistPre);
@@ -661,7 +661,6 @@ export const renderDecklist = async (
 		});
 
 		let totalPriceEl = null;
-		``;
 		if (hasCardInfo && !settings.decklist.hidePrices) {
 			totalPriceEl = createSpan(buylistLineEl, {
 				cls: "decklist__section-totals",
