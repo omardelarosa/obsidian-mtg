@@ -7,6 +7,8 @@ export interface RequestOptions {
 	method?: string;
 	body?: string;
 	contentType?: string;
+	throw?: boolean;
+	headers?: Record<string, string>;
 }
 
 export type Request = <T>(options: RequestOptions) => Promise<T>;
@@ -176,6 +178,11 @@ export const getMultipleCardData = async (
 		method: "POST",
 		body: postData,
 		contentType: "application/json",
+		throw: false,
+		headers: {
+			accept: "application/json",
+			"user-agent": "obsidian-mtg",
+		},
 	};
 
 	return request(params);
