@@ -5,6 +5,8 @@ export interface RequestOptions {
 	method?: string;
 	body?: string;
 	contentType?: string;
+	throw?: boolean;
+	headers?: Record<string, string>;
 }
 
 export type Request = <T>(options: RequestOptions) => Promise<T>;
