@@ -53,6 +53,8 @@ describe("Collection", () => {
 				nameColumn: "Name",
 				countColumn: "Count",
 				syncIntervalMs: 10,
+				syncFileName: "test",
+				syncFolder: "mtg/",
 			},
 			decklist: {
 				preferredCurrency: "usd",

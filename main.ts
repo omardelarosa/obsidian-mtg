@@ -6,7 +6,12 @@ import {
 	DEFAULT_COLLECTION_SYNC_INTERVAL,
 	syncCounts,
 } from "src/collection";
-import { renderDecklist } from "src/renderer";
+import {
+	renderDecklist,
+	fetchCardDataByIDFromScryfall,
+	renderCollection,
+} from "src/renderer";
+import { syncFileIntoCollection } from "src/sync";
 import { ObsidianPluginMtgSettings } from "src/settings";
 
 const DEFAULT_SETTINGS: ObsidianPluginMtgSettings = {
@@ -15,6 +20,8 @@ const DEFAULT_SETTINGS: ObsidianPluginMtgSettings = {
 		nameColumn: DEFAULT_COLLECTION_NAME_COLUMN,
 		countColumn: DEFAULT_COLLECTION_COUNT_COLUMN,
 		syncIntervalMs: DEFAULT_COLLECTION_SYNC_INTERVAL,
+		syncFileName: "sync",
+		syncFolder: "mtg/",
 	},
 	decklist: {
 		preferredCurrency: "usd",
@@ -69,7 +76,8 @@ export default class ObsidianPluginMtg extends Plugin {
 						el,
 						source,
 						this.cardCounts,
-						this.settings
+						this.settings,
+						this.app.workspace
 					);
 				} catch (err) {
 					error = err;
@@ -80,6 +88,48 @@ export default class ObsidianPluginMtg extends Plugin {
 					});
 					el.appendChild(errorNode);
 				}
+			}
+		);
+
+		this.registerMarkdownCodeBlockProcessor(
+			"mtg-collection",
+			async (source: string, el: HTMLElement, ctx) => {
+				let error = null;
+
+				// Sync card counts once if they haven't been already
+				if (!this.cardCounts) {
+					this.cardCounts = await syncCounts(vault, this.settings);
+				}
+
+				try {
+					await renderCollection(
+						el,
+						source,
+						this.cardCounts,
+						this.settings,
+						this.app.workspace,
+						fetchCardDataByIDFromScryfall
+					);
+				} catch (err) {
+					error = err;
+					console.log(err);
+					const errorNode = document.createDiv({
+						text: error,
+						cls: "obsidian-plugin-mtg-error",
+					});
+					el.appendChild(errorNode);
+				}
+			}
+		);
+		this.registerObsidianProtocolHandler(
+			"obsidian-mtg-action-sync-from-collection-list",
+			(params) => {
+				syncFileIntoCollection(
+					vault,
+					this.settings,
+					params["file"],
+					params["cards"]
+				);
 			}
 		);
 	}
@@ -126,6 +176,33 @@ class ObsidianPluginMtgSettingsTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.collection.fileExtension)
 					.onChange(async (value) => {
 						this.plugin.settings.collection.fileExtension = value;
+						await this.plugin.saveSettings();
+					})
+			);
+		// Collection CSV sync
+		new Setting(containerEl)
+			.setName("Synced Collection CSV file path")
+			.setDesc(
+				"The name of the CSV to write to when syncing from a collection list to a CSV"
+			)
+			.addText((text) =>
+				text
+					.setPlaceholder("sync")
+					.setValue(this.plugin.settings.collection.syncFileName)
+					.onChange(async (value) => {
+						this.plugin.settings.collection.syncFileName = value;
+						await this.plugin.saveSettings();
+					})
+			);
+		new Setting(containerEl)
+			.setName("Synced Collection CSV file path")
+			.setDesc("The folder of the CSV which the sync file should live")
+			.addText((text) =>
+				text
+					.setPlaceholder("mtg/")
+					.setValue(this.plugin.settings.collection.syncFolder)
+					.onChange(async (value) => {
+						this.plugin.settings.collection.syncFolder = value;
 						await this.plugin.saveSettings();
 					})
 			);

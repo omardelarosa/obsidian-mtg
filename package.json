@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-mtg",
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
@@ -15,7 +15,7 @@
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
 	"engines": {
-		"node": "16.17.1"
+		"node": "23.6.1"
 	},
 	"keywords": [],
 	"author": "",
@@ -37,7 +37,6 @@
 		"ts-jest": "^29.0.3",
 		"ts-node": "^10.9.1",
 		"tslib": "2.4.0",
-		"typescript": "4.7.4"
-	},
-	"dependencies": {}
+		"typescript": "5.8.2"
+	}
 }

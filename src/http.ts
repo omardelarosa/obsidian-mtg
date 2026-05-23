@@ -13,13 +13,23 @@ export type Request = <T>(options: RequestOptions) => Promise<T>;
 
 export function promiseWrappedRequest<T>(options: RequestOptions): Promise<T> {
 	return new Promise(async (resolve, reject) => {
-		const response = await requestUrl(options);
+		var response;
+		try {
+			response = await requestUrl(options);
+		} catch (error) {
+			console.log(`request ${options.url} error: ${error}`);
+			const scryfallData = null as T;
+			resolve(scryfallData);
+			return;
+		}
 		if (response.status < 400) {
 			const scryfallData = response.json as T;
 			resolve(scryfallData);
 		} else {
 			reject(
-				new Error(`RequestError: ${response.status}: ${response.text}`)
+				new Error(
+					`RequestError: ${response.status}: ${response.text} / ${response}`
+				)
 			);
 		}
 	});

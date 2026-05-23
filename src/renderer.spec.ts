@@ -28,6 +28,8 @@ describe("Renderer", () => {
 			nameColumn: "Name",
 			countColumn: "Count",
 			syncIntervalMs: 10,
+			syncFileName: "test",
+			syncFolder: "mtg/",
 		},
 		decklist: {
 			preferredCurrency: "usd",
@@ -45,6 +47,7 @@ describe("Renderer", () => {
 				EXAMPLE_DECK_1,
 				EXAMPLE_COLLECTION,
 				settings,
+				undefined,
 				fakeFetcher
 			);
 			expect(el.innerHTML.trim()).toEqual(EXAMPLE_DECK_1_HTML.trim());
@@ -62,6 +65,7 @@ describe("Renderer", () => {
 						hidePrices: true,
 					},
 				},
+				undefined,
 				fakeFetcher
 			);
 			expect(el.innerHTML.trim()).toEqual(
