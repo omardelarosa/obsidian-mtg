@@ -35,7 +35,11 @@ describe("Scryfall", () => {
 				});
 			}
 			const data = await getMultipleCardData(
-				["Delver of Secrets", "Ledger Shredder", "Dark Ritual"],
+				[
+					{ name: "Delver of Secrets" },
+					{ name: "Ledger Shredder" },
+					{ name: "Dark Ritual" },
+				],
 				httpReq
 			);
 			expect(data).toEqual(EXAMPLE_MULTI_CARD_RESPONSE);

@@ -3,7 +3,7 @@ import { renderDecklist } from "./renderer";
 import { JSDOM } from "jsdom";
 import { ObsidianPluginMtgSettings } from "./settings";
 import { EXAMPLE_DECKLIST_CARD_DATA } from "../jest/fixtures/scryfall-data";
-import { CardData } from "./scryfall";
+import { CardIdentifier, CardData } from "./scryfall";
 import {
 	EXAMPLE_COLLECTION,
 	EXAMPLE_DECK_1,
@@ -15,7 +15,7 @@ const dom = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`);
 const doc = dom.window.document;
 
 const fakeFetcher = (
-	distinctCardNames: string[]
+	distinctCards: CardIdentifier[]
 ): Promise<Record<string, CardData>> =>
 	new Promise((resolve, reject) => {
 		resolve(EXAMPLE_DECKLIST_CARD_DATA as Record<string, CardData>);
